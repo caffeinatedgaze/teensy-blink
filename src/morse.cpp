@@ -7,7 +7,7 @@
 #include "morse.hpp"
 
 // Function 1: Display signals
-void displaySignals(const SignalArray &signals)
+void displaySignals(const Signals &signals)
 {
 	std::cout << "Signal Sequence:\n";
 	for (const auto &signal : signals)
@@ -20,10 +20,29 @@ void displaySignals(const SignalArray &signals)
 }
 
 // Function 2: Encode an Arabic numeral into a sequence of signals
-SignalArray encodeNumeral(int numeral)
+Signals encodeNumeral(char numeral[4])
 {
-	SignalArray sequence = {&Dit(), &Dah()};
+	Signals sequence;
+	for (int i = 0; i < 4; ++i)
+	{
+		int digit = numeral[i] - '0';
+		for (bool isDit : morseCode[digit])
+		{
+			if (isDit)
+			{
+				sequence.push_back(new Dit());
+			}
+			else
+			{
+				sequence.push_back(new Dah());
+			}
+		}
+	}
 	return sequence;
+}
+
+void processInput()
+{
 }
 
 // void setup()

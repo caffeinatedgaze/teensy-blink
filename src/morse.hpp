@@ -11,6 +11,19 @@ const int TELEGRAPH_CODEPOINT_LEN = 4;
 const int LASER_ARRAY_LINES_N = 4;
 const int LASER_ARRAY_LINE_LEN = 4;
 
+const std::vector<std::vector<bool>> morseCode = {
+	{false, false, false, false, false}, // 0: 5 Dahs
+	{true, false, false, false, false},	 // 1: 1 Dit, 4 Dahs
+	{true, true, false, false, false},	 // 2: 2 Dits, 3 Dahs
+	{true, true, true, false, false},	 // 3: 3 Dits, 2 Dahs
+	{true, true, true, true, false},	 // 4: 4 Dits, 1 Dah
+	{true, true, true, true, true},		 // 5: 5 Dits
+	{false, true, true, true, true},	 // 6: 1 Dah, 4 Dits
+	{false, false, true, true, true},	 // 7: 2 Dahs, 3 Dits
+	{false, false, false, true, true},	 // 8: 3 Dahs, 2 Dits
+	{false, false, false, false, true}	 // 9: 4 Dahs, 1 Dit
+};
+
 // Base class for Signal types
 class Signal
 {
@@ -28,6 +41,10 @@ public:
 	operator std::string() const
 	{
 		return this->getType();
+	}
+	bool operator==(const Signal &other) const
+	{
+		return getType() == other.getType();
 	}
 };
 
@@ -68,18 +85,21 @@ public:
 };
 
 // Representation of a codepoint in morse code (i.e. dits and dahs)
-using SignalArray = std::array<Signal *, TELEGRAPH_CODEPOINT_LEN>;
+using Signals = std::vector<Signal *>;
 
 // State of each laser in the array
 using LaserStates = bool[LASER_ARRAY_LINES_N][LASER_ARRAY_LINE_LEN];
 
 // Function to encode an Arabic numeral into a sequence of dits and dahs
-SignalArray encodeNumeral(int numeral);
+Signals encodeNumeral(char numeral[4]);
 
 // Function to display signals
-void displaySignals(const SignalArray &signals);
+void displaySignals(const Signals &signals);
 
 // Process input
 void processInput();
+
+// Update a single laser
+void updateLaser(LaserStates laserStates, int i, int j, Signal *signal);
 
 #endif // SIGNAL_ENCODER_H

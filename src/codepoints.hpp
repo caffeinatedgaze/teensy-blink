@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-std::string codepoints[] = {
+const std::string CODEPOINTS[] = {
 	"2053",
 	"5280",
 	"3637",
@@ -137,7 +137,7 @@ std::string codepoints[] = {
 	"9982",
 };
 
-std::string hanziCharacters[] = {
+std::string HANZI_CHARACTERS[] = {
 	"我",
 	"与",
 	"父",

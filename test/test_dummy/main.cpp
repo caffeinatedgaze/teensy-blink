@@ -13,10 +13,86 @@ void tearDown(void)
 	// clean stuff up here
 }
 
-void test_1(void)
+void test_encodeNumeral_1111(void)
 {
-	SignalArray signalSequence = encodeNumeral(1);
-	TEST_ASSERT_EQUAL_STRING(signalSequence.front()->getType().c_str(), "dit");
+	// Arrange
+	Signals expectedSignals = {
+		// 1
+		new Dit(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		// 1
+		new Dit(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		// 1
+		new Dit(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		// 1
+		new Dit(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+	};
+
+	// Act
+	Signals signals = encodeNumeral("1111");
+
+	// Assert
+	TEST_ASSERT_EQUAL_INT(expectedSignals.size(), signals.size());
+	for (int i = 0; i < signals.size(); i++)
+	{
+		TEST_ASSERT(*signals.at(i) == *expectedSignals[i]);
+	}
+}
+
+void test_encodeNumeral_9123(void)
+{
+	// Arrange
+	Signals expectedSignals = {
+		// 9
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		new Dit(),
+		// 1
+		new Dit(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		// 2
+		new Dit(),
+		new Dit(),
+		new Dah(),
+		new Dah(),
+		new Dah(),
+		// 3
+		new Dit(),
+		new Dit(),
+		new Dit(),
+		new Dah(),
+		new Dah(),
+	};
+
+	// Act
+	Signals signals = encodeNumeral("9123");
+
+	// Assert
+	TEST_ASSERT_EQUAL_INT(expectedSignals.size(), signals.size());
+	for (int i = 0; i < signals.size(); i++)
+	{
+		TEST_ASSERT(*signals.at(i) == *expectedSignals[i]);
+	}
 }
 
 void test_process_input(void)
@@ -36,10 +112,19 @@ void setup()
 	UNITY_BEGIN(); // IMPORTANT LINE!
 }
 
-void loop()
+// void loop()
+// {
+// 	// RUN_TEST(test_encodeNumeral_1111);
+// 	// RUN_TEST(test_encodeNumeral_9123);
+// 	UNITY_END(); // stop unit testing
+// 				 // exit(0);
+// }
+
+int main(void)
 {
-	RUN_TEST(test_1);
+	setup();
 	RUN_TEST(test_process_input);
-	UNITY_END(); // stop unit testing
-	exit(0);
+	RUN_TEST(test_encodeNumeral_1111);
+	RUN_TEST(test_encodeNumeral_9123);
+	UNITY_END();
 }
