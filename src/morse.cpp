@@ -7,7 +7,7 @@
 #include "morse.hpp"
 
 // Function 1: Display signals
-void displaySignals(const SignalSequence &signals)
+void displaySignals(const SignalArray &signals)
 {
 	std::cout << "Signal Sequence:\n";
 	for (const auto &signal : signals)
@@ -20,9 +20,9 @@ void displaySignals(const SignalSequence &signals)
 }
 
 // Function 2: Encode an Arabic numeral into a sequence of signals
-SignalSequence encodeNumeral(int numeral)
+SignalArray encodeNumeral(int numeral)
 {
-	SignalSequence sequence = {&Dit()};
+	SignalArray sequence = {&Dit()};
 	return sequence;
 }
 

@@ -7,6 +7,8 @@
 #include <string>
 #include <algorithm>
 
+const int TELEGRAPH_CODEPOINT_LEN = 4;
+
 // Base class for Signal types
 class Signal
 {
@@ -63,12 +65,16 @@ public:
 	}
 };
 
-using SignalSequence = std::array<Signal *, 4>;
-SignalSequence encodeNumeral(int numeral);
-
-// Function to display signals
-void displaySignals(const SignalSequence &signals);
+using TelegraphCodeVector = std::vector<int>;
+using SignalArray = std::array<Signal *, TELEGRAPH_CODEPOINT_LEN>;
 
 // Function to encode an Arabic numeral into a sequence of signals
+SignalArray encodeNumeral(int numeral);
+
+// Function to display signals
+void displaySignals(const SignalArray &signals);
+
+// Process input
+void processInput(SignalArray signalSequence, int refreshRate, const TelegraphCodeVector &telegraphCode, int wordsPerLaser);
 
 #endif // SIGNAL_ENCODER_H
