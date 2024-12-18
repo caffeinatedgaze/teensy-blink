@@ -22,7 +22,7 @@ void displaySignals(const SignalArray &signals)
 // Function 2: Encode an Arabic numeral into a sequence of signals
 SignalArray encodeNumeral(int numeral)
 {
-	SignalArray sequence = {&Dit()};
+	SignalArray sequence = {&Dit(), &Dah()};
 	return sequence;
 }
 

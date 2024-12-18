@@ -15,14 +15,12 @@ void tearDown(void)
 
 void test_1(void)
 {
-	SignalSequence signalSequence = encodeNumeral(1);
+	SignalArray signalSequence = encodeNumeral(1);
 	TEST_ASSERT_EQUAL_STRING(signalSequence.front()->getType().c_str(), "dit");
 }
 
-void test_2(void)
+void test_process_input(void)
 {
-	SignalSequence signalSequence = encodeNumeral(1);
-	TEST_ASSERT_EQUAL_STRING(signalSequence.front()->getType().c_str(), "dit");
 }
 
 void setup()
@@ -41,7 +39,7 @@ void setup()
 void loop()
 {
 	RUN_TEST(test_1);
-	RUN_TEST(test_2);
+	RUN_TEST(test_process_input);
 	UNITY_END(); // stop unit testing
 	exit(0);
 }

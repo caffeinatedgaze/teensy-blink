@@ -8,6 +8,8 @@
 #include <algorithm>
 
 const int TELEGRAPH_CODEPOINT_LEN = 4;
+const int LASER_ARRAY_LINES_N = 4;
+const int LASER_ARRAY_LINE_LEN = 4;
 
 // Base class for Signal types
 class Signal
@@ -65,16 +67,19 @@ public:
 	}
 };
 
-using TelegraphCodeVector = std::vector<int>;
+// Representation of a codepoint in morse code (i.e. dits and dahs)
 using SignalArray = std::array<Signal *, TELEGRAPH_CODEPOINT_LEN>;
 
-// Function to encode an Arabic numeral into a sequence of signals
+// State of each laser in the array
+using LaserStates = bool[LASER_ARRAY_LINES_N][LASER_ARRAY_LINE_LEN];
+
+// Function to encode an Arabic numeral into a sequence of dits and dahs
 SignalArray encodeNumeral(int numeral);
 
 // Function to display signals
 void displaySignals(const SignalArray &signals);
 
 // Process input
-void processInput(SignalArray signalSequence, int refreshRate, const TelegraphCodeVector &telegraphCode, int wordsPerLaser);
+void processInput();
 
 #endif // SIGNAL_ENCODER_H
