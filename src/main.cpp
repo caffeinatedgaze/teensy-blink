@@ -1,27 +1,23 @@
-/*
- * Blink
- * Turns on an LED on for one second,
- * then off for one second, repeatedly.
- */
-
 #include <Arduino.h>
 #include <cstdlib>
 #include "morse.hpp"
 
 void setup()
 {
-  // initialize LED digital pin as an output.
-  pinMode(LED_BUILTIN, OUTPUT);
+	Dit dit;
+	Dah dah;
+	Space space;
+
+	while (!Serial && millis() < 15000)
+	{
+		// wait for Arduino Serial Monitor to be ready
+	}
+	Serial.println("Serial port is ready.");
 }
 
 void loop()
 {
-  // turn the LED on (HIGH is the voltage level)
-  digitalWrite(LED_BUILTIN, HIGH);
-  // wait for a second
-  delay(rand() % 1000 + 1);
-  // turn the LED off by making the voltage LOW
-  digitalWrite(LED_BUILTIN, LOW);
-   // wait for a second
-  delay(rand() % 1000 + 1);
+	SignalSequence signalSequence = encodeNumeral(1);
+	Signal* signal = signalSequence.front();
+	std::cout << signal->getType().c_str() << std::endl;
 }
