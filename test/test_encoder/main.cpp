@@ -95,10 +95,6 @@ void test_encodeNumeral_9123(void)
 	}
 }
 
-void test_process_input(void)
-{
-}
-
 void setup()
 {
 	pinMode(LED_BUILTIN, OUTPUT);
@@ -112,18 +108,9 @@ void setup()
 	UNITY_BEGIN(); // IMPORTANT LINE!
 }
 
-// void loop()
-// {
-// 	// RUN_TEST(test_encodeNumeral_1111);
-// 	// RUN_TEST(test_encodeNumeral_9123);
-// 	UNITY_END(); // stop unit testing
-// 				 // exit(0);
-// }
-
 int main(void)
 {
 	setup();
-	RUN_TEST(test_process_input);
 	RUN_TEST(test_encodeNumeral_1111);
 	RUN_TEST(test_encodeNumeral_9123);
 	UNITY_END();
