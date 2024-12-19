@@ -48,7 +48,7 @@ void test_encodeNumeral_1111(void)
 
 	// Assert
 	TEST_ASSERT_EQUAL_INT(expectedSignals.size(), signals.size());
-	for (int i = 0; i < signals.size(); i++)
+	for (u_int i = 0; i < signals.size(); i++)
 	{
 		TEST_ASSERT(*signals.at(i) == *expectedSignals[i]);
 	}
@@ -89,7 +89,7 @@ void test_encodeNumeral_9123(void)
 
 	// Assert
 	TEST_ASSERT_EQUAL_INT(expectedSignals.size(), signals.size());
-	for (int i = 0; i < signals.size(); i++)
+	for (u_int i = 0; i < signals.size(); i++)
 	{
 		TEST_ASSERT(*signals.at(i) == *expectedSignals[i]);
 	}

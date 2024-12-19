@@ -8,8 +8,7 @@
 #include <algorithm>
 
 const int TELEGRAPH_CODEPOINT_LEN = 4;
-const int LASER_ARRAY_LINES_N = 4;
-const int LASER_ARRAY_LINE_LEN = 4;
+const int LASER_ARRAY_LINE_LEN = 10;
 
 const std::vector<std::vector<bool>> morseCode = {
 	{false, false, false, false, false}, // 0: 5 Dahs
@@ -30,9 +29,9 @@ class Signal
 public:
 	int counter;
 	int max_value;
-	int value;
+	bool value;
 
-	Signal(int cnt = 0, int max_val = 0, int val = 0)
+	Signal(int cnt = 0, int max_val = 0, int val = false)
 		: counter(cnt), max_value(max_val), value(val) {}
 
 	virtual std::string getType() const = 0; // Pure virtual function
@@ -52,7 +51,7 @@ public:
 class Dit : public Signal
 {
 public:
-	Dit() : Signal(0, 1, 1) {} // Default values: counter = 0, max_value = 1, value = 1
+	Dit() : Signal(0, 1, true) {} // Default values: counter = 0, max_value = 1, value = 1
 
 	std::string getType() const override
 	{
@@ -64,7 +63,7 @@ public:
 class Dah : public Signal
 {
 public:
-	Dah() : Signal(0, 3, 1) {} // Default values: counter = 0, max_value = 3, value = 1
+	Dah() : Signal(0, 3, true) {} // Default values: counter = 0, max_value = 3, value = 1
 
 	std::string getType() const override
 	{
@@ -72,15 +71,38 @@ public:
 	}
 };
 
-// Derived class for Space
-class Space : public Signal
+// Derived class for Space. Space between letters.
+class SpaceBetweenCharacters : public Signal
 {
 public:
-	Space() : Signal(0, 3, 0) {} // Default values: counter = 0, max_value = 3, value = 0
+	SpaceBetweenCharacters() : Signal(0, 1, false) {} // Default values: counter = 0, max_value = 3, value = 0
 
 	std::string getType() const override
 	{
-		return "space";
+		return ".";
+	}
+};
+
+class SpaceBetweenCodepoints: public Signal
+{
+public:
+	SpaceBetweenCodepoints() : Signal(0, 3, false) {} // Default values: counter = 0, max_value = 3, value = 0
+
+	std::string getType() const override
+	{
+		return "|";
+	}
+};
+
+// Derived class for Space
+class BreakBetweenSentences: public Signal
+{
+public:
+	BreakBetweenSentences() : Signal(0, 7, false) {} // Default values: counter = 0, max_value = 7, value = 0
+
+	std::string getType() const override
+	{
+		return "break";
 	}
 };
 
@@ -88,10 +110,10 @@ public:
 using Signals = std::vector<Signal *>;
 
 // State of each laser in the array
-using LaserStates = bool[LASER_ARRAY_LINES_N][LASER_ARRAY_LINE_LEN];
+using LaserStates = bool[LASER_ARRAY_LINE_LEN];
 
 // Function to encode an Arabic numeral into a sequence of dits and dahs
-Signals encodeNumeral(char numeral[4]);
+Signals encodeNumeral(const char numeral[4]);
 
 // Function to display signals
 void displaySignals(const Signals &signals);
