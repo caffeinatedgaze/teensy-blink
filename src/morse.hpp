@@ -10,7 +10,7 @@
 const int TELEGRAPH_CODEPOINT_LEN = 4;
 const int LASER_ARRAY_LINE_LEN = 10;
 
-const std::vector<std::vector<bool>> morseCode = {
+const std::vector<std::vector<bool>> morseCodeByDigit = {
 	{false, false, false, false, false}, // 0: 5 Dahs
 	{true, false, false, false, false},	 // 1: 1 Dit, 4 Dahs
 	{true, true, false, false, false},	 // 2: 2 Dits, 3 Dahs
@@ -23,7 +23,7 @@ const std::vector<std::vector<bool>> morseCode = {
 	{false, false, false, false, true}	 // 9: 4 Dahs, 1 Dit
 };
 
-// Base class for Signal types
+// Base class for Signal types. It signifies either a letter or a break.
 class Signal
 {
 public:
@@ -72,10 +72,10 @@ public:
 };
 
 // Derived class for Space. Space between letters.
-class SpaceBetweenCharacters : public Signal
+class LetterBreak : public Signal
 {
 public:
-	SpaceBetweenCharacters() : Signal(0, 1, false) {} // Default values: counter = 0, max_value = 3, value = 0
+	LetterBreak() : Signal(0, 1, false) {} // Default values: counter = 0, max_value = 3, value = 0
 
 	std::string getType() const override
 	{
@@ -83,10 +83,10 @@ public:
 	}
 };
 
-class SpaceBetweenCodepoints: public Signal
+class WordBreak: public Signal
 {
 public:
-	SpaceBetweenCodepoints() : Signal(0, 3, false) {} // Default values: counter = 0, max_value = 3, value = 0
+	WordBreak() : Signal(0, 3, false) {} // Default values: counter = 0, max_value = 3, value = 0
 
 	std::string getType() const override
 	{
@@ -95,10 +95,10 @@ public:
 };
 
 // Derived class for Space
-class BreakBetweenSentences: public Signal
+class SentenceBreak: public Signal
 {
 public:
-	BreakBetweenSentences() : Signal(0, 7, false) {} // Default values: counter = 0, max_value = 7, value = 0
+	SentenceBreak() : Signal(0, 7, false) {} // Default values: counter = 0, max_value = 7, value = 0
 
 	std::string getType() const override
 	{

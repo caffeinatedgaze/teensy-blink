@@ -13,33 +13,55 @@ void tearDown(void)
 	// clean stuff up here
 }
 
+// expected encoded sequence:
+//
+// 	dit . dah . dah . dah . dah | dit . dah . dah . dah . dah | dit . dah . dah . dah . dah | dit . dah . dah . dah . dah
 void test_encodeNumeral_1111(void)
 {
 	// Arrange
 	Signals expectedSignals = {
 		// 1
 		new Dit(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new WordBreak(),
 		// 1
 		new Dit(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new WordBreak(),
 		// 1
 		new Dit(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new WordBreak(),
 		// 1
 		new Dit(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
 	};
 
@@ -54,33 +76,55 @@ void test_encodeNumeral_1111(void)
 	}
 }
 
+// expected encoded sequence:
+//
+// 	dah . dah . dah . dah . dit | dit . dah . dah . dah . dah | dit . dit . dah . dah . dah | dit . dit . dit . dah . dah
 void test_encodeNumeral_9123(void)
 {
 	// Arrange
 	Signals expectedSignals = {
 		// 9
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dit(),
+		new WordBreak(),
 		// 1
 		new Dit(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new WordBreak(),
 		// 2
 		new Dit(),
+		new LetterBreak(),
 		new Dit(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
+		new WordBreak(),
 		// 3
 		new Dit(),
+		new LetterBreak(),
 		new Dit(),
+		new LetterBreak(),
 		new Dit(),
+		new LetterBreak(),
 		new Dah(),
+		new LetterBreak(),
 		new Dah(),
 	};
 

@@ -10,11 +10,14 @@
 Signals encodeNumeral(const char numeral[4])
 {
 	Signals sequence;
-	for (int i = 0; i < 4; ++i)
+	for (size_t i = 0; i < 4; ++i)
 	{
 		int digit = numeral[i] - '0';
-		for (bool isDit : morseCode[digit])
+		bool isNotLastSignalForWord = i < 3;
+		for (size_t j = 0; j < morseCodeByDigit[digit].size(); j++)
 		{
+			bool isDit = morseCodeByDigit[digit][j];
+			bool isNotLastSignalForLetter = j < morseCodeByDigit[digit].size() - 1;
 			if (isDit)
 			{
 				sequence.push_back(new Dit());
@@ -23,10 +26,20 @@ Signals encodeNumeral(const char numeral[4])
 			{
 				sequence.push_back(new Dah());
 			}
-			sequence.push_back(new SpaceBetweenCharacters());
+			if (isNotLastSignalForLetter)
+			{
+				sequence.push_back(new LetterBreak());
+			}
 		}
-		sequence.push_back(new SpaceBetweenCodepoints());
+		if (isNotLastSignalForWord)
+		{
+			sequence.push_back(new WordBreak());
+		}
 	}
-	sequence.push_back(new BreakBetweenSentences());
+	for (auto signal : sequence)
+	{
+		std::cout << signal->getType() << " ";
+	}
+	std::cout << std::endl;
 	return sequence;
 }
