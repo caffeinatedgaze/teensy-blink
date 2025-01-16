@@ -1,8 +1,12 @@
 #include <Arduino.h>
 #include <cstdlib>
 #include <iostream>
+#include <SoftwareSerial.h>
 #include "morse.hpp"
 #include "codepoints.hpp"
+#include "forPrinting.hpp"
+
+SoftwareSerial printer(21, 20);
 
 void setup()
 {
@@ -16,6 +20,7 @@ void setup()
 	{
 		pinMode(i, OUTPUT);
 	}
+	printer.begin(9600);
 }
 
 u_int currentCodepointIndex = 0;
@@ -23,19 +28,23 @@ u_int currentLaserIndex = 0;
 const int refreshRate = 100;
 const int cyclesBeforePrint = 30; // N times of the refresh rate.
 u_int currentCycle = 0;
-LaserStates laserStates = {false};
+u_int currentPrintingLine = 0;
 
 void loop()
 {
+	// for (std::string tgCode : telegraphCodes) {  
+	// 	printer.println(tgCode.c_str());
 	std::string currentCodepoint = CODEPOINTS[currentCodepointIndex++];
-	std::cout << "Current codepoint: " << currentCodepoint << std::endl;
+	// 	delay(500);
+	// }
+	// std::cout << "Current codepoint: " << currentCodepoint << std::endl;
 	Signals signals = encodeNumeral(currentCodepoint.c_str());
 
-	for (const Signal *signal : signals)
-	{
-		std::cout << signal->getType() << " ";
-	}
-	std::cout << std::endl;
+	// for (const Signal *signal : signals)
+	// {
+	// 	std::cout << signal->getType() << " ";
+	// }
+	// std::cout << std::endl;
 
 	for (Signal *signal : signals)
 	{
@@ -54,21 +63,14 @@ void loop()
 			signal->counter++;
 			if (currentCycle % cyclesBeforePrint == 0)
 			{
-				std::cout << "Printing" << std::endl;
+				printer.println(forPrinting[currentPrintingLine].c_str());
+				currentPrintingLine = (currentPrintingLine + 1) % forPrinting.size();
 				currentCycle = 1;
 			}
 			currentCycle++;
 			delay(refreshRate);
 		}
 	}
-
-	currentLaserIndex++;
-	if (currentLaserIndex == LASER_ARRAY_LINE_LEN - 1)
-	{
-		currentLaserIndex = 0;
-	}
-	if (currentCodepointIndex == CODEPOINTS->length() - 1)
-	{
-		currentCodepointIndex = 0;
-	}
+	currentLaserIndex = (currentLaserIndex + 1) % LASER_ARRAY_LINE_LEN;
+	currentCodepointIndex = (currentCodepointIndex + 1) % CODEPOINTS->length();
 }
