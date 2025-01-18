@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <unity.h>
+#include <memory>
 #include "morse.hpp"
 #include "morse.cpp"
 
@@ -21,48 +22,48 @@ void test_encodeNumeral_1111(void)
 	// Arrange
 	Signals expectedSignals = {
 		// 1
-		new Dit(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new WordBreak(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<WordBreak>(),
 		// 1
-		new Dit(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new WordBreak(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<WordBreak>(),
 		// 1
-		new Dit(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new WordBreak(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<WordBreak>(),
 		// 1
-		new Dit(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
 	};
 
 	// Act
@@ -74,6 +75,10 @@ void test_encodeNumeral_1111(void)
 	{
 		TEST_ASSERT(*signals.at(i) == *expectedSignals[i]);
 	}
+
+	// Tear down
+	expectedSignals.clear();
+	signals.clear();
 }
 
 // expected encoded sequence:
@@ -84,48 +89,48 @@ void test_encodeNumeral_9123(void)
 	// Arrange
 	Signals expectedSignals = {
 		// 9
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dit(),
-		new WordBreak(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dit>(),
+		std::make_shared<WordBreak>(),
 		// 1
-		new Dit(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new WordBreak(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<WordBreak>(),
 		// 2
-		new Dit(),
-		new LetterBreak(),
-		new Dit(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
-		new WordBreak(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<WordBreak>(),
 		// 3
-		new Dit(),
-		new LetterBreak(),
-		new Dit(),
-		new LetterBreak(),
-		new Dit(),
-		new LetterBreak(),
-		new Dah(),
-		new LetterBreak(),
-		new Dah(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dit>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
+		std::make_shared<LetterBreak>(),
+		std::make_shared<Dah>(),
 	};
 
 	// Act
@@ -137,12 +142,14 @@ void test_encodeNumeral_9123(void)
 	{
 		TEST_ASSERT(*signals.at(i) == *expectedSignals[i]);
 	}
+
+	// Tear down
+	expectedSignals.clear();
+	signals.clear();
 }
 
 void setup()
 {
-	pinMode(LED_BUILTIN, OUTPUT);
-
 	while (!Serial && millis() < 15000)
 	{
 		// wait for Arduino Serial Monitor to be ready

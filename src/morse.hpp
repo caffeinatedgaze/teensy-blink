@@ -6,9 +6,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-
-const int TELEGRAPH_CODEPOINT_LEN = 4;
-const int LASER_ARRAY_LINE_LEN = 10;
+#include <memory>
 
 const std::vector<std::vector<bool>> morseCodeByDigit = {
 	{false, false, false, false, false}, // 0: 5 Dahs
@@ -83,7 +81,7 @@ public:
 	}
 };
 
-class WordBreak: public Signal
+class WordBreak : public Signal
 {
 public:
 	WordBreak() : Signal(0, 3, false) {} // Default values: counter = 0, max_value = 3, value = 0
@@ -95,7 +93,7 @@ public:
 };
 
 // Derived class for Space
-class SentenceBreak: public Signal
+class SentenceBreak : public Signal
 {
 public:
 	SentenceBreak() : Signal(0, 7, false) {} // Default values: counter = 0, max_value = 7, value = 0
@@ -107,21 +105,9 @@ public:
 };
 
 // Representation of a codepoint in morse code (i.e. dits and dahs)
-using Signals = std::vector<Signal *>;
-
-// State of each laser in the array
-using LaserStates = bool[LASER_ARRAY_LINE_LEN];
+using Signals = std::vector<std::shared_ptr<Signal>>;
 
 // Function to encode an Arabic numeral into a sequence of dits and dahs
 Signals encodeNumeral(const char numeral[4]);
-
-// Function to display signals
-void displaySignals(const Signals &signals);
-
-// Process input
-void processInput();
-
-// Update a single laser
-void updateLaser(LaserStates laserStates, int i, int j, Signal *signal);
 
 #endif // SIGNAL_ENCODER_H

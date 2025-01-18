@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <memory>
 #include <algorithm>
 #include <Arduino.h>
 #include "morse.hpp"
@@ -20,23 +21,23 @@ Signals encodeNumeral(const char numeral[4])
 			bool isNotLastSignalForLetter = j < morseCodeByDigit[digit].size() - 1;
 			if (isDit)
 			{
-				sequence.push_back(new Dit());
+				sequence.push_back(std::make_shared<Dit>());
 			}
 			else
 			{
-				sequence.push_back(new Dah());
+				sequence.push_back(std::make_shared<Dah>());
 			}
 			if (isNotLastSignalForLetter)
 			{
-				sequence.push_back(new LetterBreak());
+				sequence.push_back(std::make_shared<LetterBreak>());
 			}
 		}
 		if (isNotLastSignalForWord)
 		{
-			sequence.push_back(new WordBreak());
+			sequence.push_back(std::make_shared<WordBreak>());
 		}
 	}
-	for (auto signal : sequence)
+	for (const auto& signal : sequence)
 	{
 		std::cout << signal->getType() << " ";
 	}
