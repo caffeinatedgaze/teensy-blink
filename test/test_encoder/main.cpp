@@ -17,7 +17,7 @@ void tearDown(void)
 // expected encoded sequence:
 //
 // 	dit . dah . dah . dah . dah | dit . dah . dah . dah . dah | dit . dah . dah . dah . dah | dit . dah . dah . dah . dah
-void test_encodeNumeral_1111(void)
+void testEncodeNumeral1111(void)
 {
 	// Arrange
 	Signals expectedSignals = {
@@ -84,7 +84,7 @@ void test_encodeNumeral_1111(void)
 // expected encoded sequence:
 //
 // 	dah . dah . dah . dah . dit | dit . dah . dah . dah . dah | dit . dit . dah . dah . dah | dit . dit . dit . dah . dah
-void test_encodeNumeral_9123(void)
+void testEncodeNumeral9123(void)
 {
 	// Arrange
 	Signals expectedSignals = {
@@ -162,7 +162,7 @@ void setup()
 int main(void)
 {
 	setup();
-	RUN_TEST(test_encodeNumeral_1111);
-	RUN_TEST(test_encodeNumeral_9123);
+	RUN_TEST(testEncodeNumeral1111);
+	RUN_TEST(testEncodeNumeral9123);
 	UNITY_END();
 }
