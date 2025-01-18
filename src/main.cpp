@@ -3,15 +3,9 @@
 #include <iostream>
 #include <SoftwareSerial.h>
 #include "morse.hpp"
+#include "main.hpp"
 
 SoftwareSerial printer(21, 20);
-
-struct LaserStates
-// States (on/off) of lasers in each array.
-{
-	bool primaryLaserStates[24][24] = {false};
-	bool secondaryLaserStates[24][24] = {false};
-};
 
 void setup()
 {

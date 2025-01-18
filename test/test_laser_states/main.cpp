@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <unity.h>
+#include "main.hpp"
 
 void setUp(void)
 {
@@ -11,8 +12,19 @@ void tearDown(void)
 	// clean stuff up here
 }
 
-void test_initial_matrix()
+// Test that initial matrix is full of zeros.
+void testInitialMatrix()
 {
+	// Arrange
+	bool expectedPrimaryLaserStates[24][24] = {false};
+	bool expectedSecondaryLaserStates[24][24] = {false};
+	LaserStates laserStates;
+
+	// Assert
+	TEST_ASSERT_EQUAL_MEMORY(
+		expectedPrimaryLaserStates, laserStates.primaryLaserStates, sizeof(expectedPrimaryLaserStates));
+	TEST_ASSERT_EQUAL_MEMORY(
+		expectedSecondaryLaserStates, laserStates.secondaryLaserStates, sizeof(expectedPrimaryLaserStates));
 }
 
 void setup()
@@ -31,6 +43,6 @@ void setup()
 int main(void)
 {
 	setup();
-	RUN_TEST(test_initial_matrix);
+	RUN_TEST(testInitialMatrix);
 	UNITY_END();
 }
