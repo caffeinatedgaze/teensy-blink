@@ -110,4 +110,6 @@ using Signals = std::vector<std::shared_ptr<Signal>>;
 // Function to encode an Arabic numeral into a sequence of dits and dahs
 Signals encodeNumeral(const char numeral[4]);
 
+void printSignals(const Signals &signals);
+
 #endif // SIGNAL_ENCODER_H

@@ -3,41 +3,17 @@
 #include <iostream>
 #include <SoftwareSerial.h>
 #include "morse.hpp"
+#include "codepoints.hpp"
+#include "patternExecutor.hpp"
 #include "main.hpp"
 
-enum class PatternType
-{
-	ZigZag,
-	Random
-};
-
-enum class TeensyType
-{
-	Primary,
-	Secondary
-};
-
-// Changes the state of the laser array according to a pattern: zigzag or random.
-class PatternExecutor
-{
-public:
-	PatternType patternType;
-	TeensyType currentTeensyType = TeensyType::Primary;
-	LaserStates &laserStates;
-
-	PatternExecutor(PatternType patternType, LaserStates &laserStates) : patternType(patternType), laserStates(laserStates)
-	{
-	}
-
-	// Choose the next laser according to the pattern.
-	void chooseNextLaser();
-
-	// Update the laser array in the primary as well as send command to the secondary.
-	void setLaserState(bool laserState);
-};
-
-LaserStates laserStates;
 PatternExecutor *patternExecutor;
+LaserStates laserStates;
+uint64_t currentCodepointIdx = 0;
+std::string currentCodepoint;
+Signals currentCodepointMorseCode;
+// Refresh rate that is equal to the duration of Dit – the shortest Morse code signal.
+uint16_t refreshRate = 200; // in ms
 
 void setup()
 {
@@ -49,6 +25,12 @@ void setup()
 	pinMode(LED_BUILTIN, OUTPUT);
 
 	patternExecutor = new PatternExecutor(PatternType::ZigZag, laserStates);
+
+	if (0 == CODEPOINTS.size())
+	{
+		std::cout << "CODEPOINTS cannot be of zero length. Aborting.";
+		exit(1);
+	}
 }
 
 void teardown()
@@ -58,10 +40,27 @@ void teardown()
 
 void loop()
 {
-	analogWrite(LED_BUILTIN, HIGH);
-	delay(1000);
-	analogWrite(LED_BUILTIN, LOW);
-	delay(1000);
+	currentCodepoint = CODEPOINTS[currentCodepointIdx];
+	currentCodepointMorseCode = encodeNumeral(currentCodepoint.c_str());
+	printSignals(currentCodepointMorseCode);
+
+	for (const auto &signal : currentCodepointMorseCode)
+	{
+		// Set laser state according to the signal.
+		patternExecutor->setLaserState(signal->value);
+		analogWrite(LED_BUILTIN, signal->value ? HIGH : LOW);
+
+		// Wait for the signal duration.
+		while (signal->counter < signal->max_value)
+		{
+			delay(refreshRate);
+			signal->counter++;
+		}
+	}
+
+	currentCodepointIdx = (currentCodepointIdx + 1) % CODEPOINTS.size();
+	std::cout << "Current codepoint Idx: " << currentCodepointIdx << std::endl;
+	std::cout << "Codepoints length: " << CODEPOINTS.size() << std::endl;
 
 	// initialize pattern producer with the matrix and its dimensions
 	// getCodepoint from the translated sequence.

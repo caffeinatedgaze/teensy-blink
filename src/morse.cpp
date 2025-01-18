@@ -7,6 +7,16 @@
 #include <Arduino.h>
 #include "morse.hpp"
 
+
+void printSignals(const Signals &signals)
+{
+	for (const auto &signal : signals)
+	{
+		std::cout << signal->getType() << " ";
+	}
+	std::cout << std::endl;
+}
+
 // Encode an Arabic numeral into a sequence of signals
 Signals encodeNumeral(const char numeral[4])
 {
@@ -37,10 +47,5 @@ Signals encodeNumeral(const char numeral[4])
 			sequence.push_back(std::make_shared<WordBreak>());
 		}
 	}
-	for (const auto& signal : sequence)
-	{
-		std::cout << signal->getType() << " ";
-	}
-	std::cout << std::endl;
 	return sequence;
 }
