@@ -82,7 +82,6 @@ void setup()
 		// wait for Arduino Serial Monitor to be ready
 	}
 	Serial.println("Serial port is ready.");
-	pinMode(LED_BUILTIN, OUTPUT);
 
 	for (size_t i = 0; i < pinByIdx.size(); i++)
 	{
@@ -132,8 +131,6 @@ void loop()
 		patternExecutor->setLaserState(signal->value);
 		std::cout << "Current signal type: " << signal->getType() << std::endl;
 		printLaserStates(laserStates);
-		// Blink the built-in LED.
-		analogWrite(LED_BUILTIN, signal->value ? HIGH : LOW);
 		// Wait for the signal duration.
 		while (signal->counter < signal->max_value)
 		{

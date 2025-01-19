@@ -61,10 +61,8 @@ PinIdx getPinId(uint16_t arrayNumber, uint16_t idx)
 	switch (arrayNumber)
 	{
 	case 0:
-		std::cout << "idx: " << idx << std::endl;
 		return pinByIdx.at(idx);
 	case 1:
-		std::cout << "idx + LASER_ARRAY_Y: " << idx + LASER_ARRAY_Y << std::endl;
 		return pinByIdx.at(idx + LASER_ARRAY_Y);
 	default:
 		std::cout << "Unexpected arrayNumber." << std::endl;
@@ -81,9 +79,6 @@ void PatternExecutor::setLaserState(bool laserState)
 		laserStates.primaryLaserStates[currentLaserX][currentLaserY] = laserState;
 		// Retrieve the real pin number.
 		PinIdx pinIdx = getPinId(currentLaserX, currentLaserY);
-
-		std::cout << "Real pin ID: " << (int)currentLaserX
-				  << " " << (int)currentLaserY << " " << (int)pinIdx << std::endl;
 		// If extended pin, then set using MCP.
 		if (isPinExtended(currentLaserX, currentLaserY))
 		{
@@ -92,7 +87,7 @@ void PatternExecutor::setLaserState(bool laserState)
 		// If non-extended, then set using normal API.
 		else
 		{
-			analogWrite(pinIdx, laserState ? HIGH : LOW);
+			digitalWrite(pinIdx, laserState ? HIGH : LOW);
 		}
 		break;
 	}
