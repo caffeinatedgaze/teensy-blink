@@ -20,7 +20,7 @@ public:
 	uint8_t currentLaserX = 0;
 	uint8_t currentLaserY = 0;
 
-	PatternExecutor(LaserStates &laserStates) : patternType(patternType), laserStates(laserStates)
+	PatternExecutor(PatternType patternType, LaserStates &laserStates) : patternType(patternType), laserStates(laserStates)
 	{
 	}
 

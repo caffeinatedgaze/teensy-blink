@@ -24,7 +24,7 @@ void setup()
 	Serial.println("Serial port is ready.");
 	pinMode(LED_BUILTIN, OUTPUT);
 
-	patternExecutor = new PatternExecutor(PatternType::ZigZag, laserStates);
+	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
 
 	if (0 == CODEPOINTS.size())
 	{
