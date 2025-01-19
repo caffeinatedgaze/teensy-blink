@@ -40,41 +40,54 @@ void teardown()
 
 void loop()
 {
-	currentCodepoint = CODEPOINTS[currentCodepointIdx];
-	currentCodepointMorseCode = encodeNumeral(currentCodepoint.c_str());
-	printSignals(currentCodepointMorseCode);
-
-	for (uint8_t i = 0; i < currentCodepointMorseCode.size(); i++)
+	try
 	{
-		SignalPtr signal = currentCodepointMorseCode[i];
+		currentCodepoint = CODEPOINTS[currentCodepointIdx];
+		currentCodepointMorseCode = encodeNumeral(currentCodepoint.c_str());
+		printSignals(currentCodepointMorseCode);
 
-		// Set laser state according to the signal.
-		patternExecutor->setLaserState(signal->value);
-		std::cout << "Current signal type: " << signal->getType() << std::endl;
-		printLaserStates(laserStates);
-		// Blink the built-in LED.
-		analogWrite(LED_BUILTIN, signal->value ? HIGH : LOW);
-		// Wait for the signal duration.
-		while (signal->counter < signal->max_value)
+		for (uint8_t i = 0; i < currentCodepointMorseCode.size(); i++)
 		{
-			delay(refreshRate);
-			signal->counter++;
+			SignalPtr signal = currentCodepointMorseCode[i];
+
+			// Set laser state according to the signal.
+			patternExecutor->setLaserState(signal->value);
+			std::cout << "Current signal type: " << signal->getType() << std::endl;
+			printLaserStates(laserStates);
+			// Blink the built-in LED.
+			analogWrite(LED_BUILTIN, signal->value ? HIGH : LOW);
+			// Wait for the signal duration.
+			while (signal->counter < signal->max_value)
+			{
+				delay(refreshRate);
+				signal->counter++;
+			}
+			// Move to the next laser according to the pattern.
+			// Do not move if the next signal type is a break.
+			std::string currentCodepointType = currentCodepointMorseCode[i + 1]->getType();
+			if (
+				currentCodepointType != LETTER_BREAK &&
+				currentCodepointType != WORD_BREAK &&
+				currentCodepointType != SENTENCE_BREAK)
+			{
+				patternExecutor->chooseNextLaser();
+			}
 		}
-		// Move to the next laser according to the pattern.
-		// Do not move if the next signal type is a break.
-		std::string currentCodepointType = currentCodepointMorseCode[i + 1]->getType();
-		if (
-			currentCodepointType != LETTER_BREAK &&
-			currentCodepointType != WORD_BREAK &&
-			currentCodepointType != SENTENCE_BREAK)
-		{
-			patternExecutor->chooseNextLaser();
-		}
+
+		currentCodepointIdx = (currentCodepointIdx + 1) % CODEPOINTS.size();
+		std::cout << "Current codepoint Idx: " << currentCodepointIdx << std::endl;
+		std::cout << "Codepoints length: " << CODEPOINTS.size() << std::endl;
 	}
-
-	currentCodepointIdx = (currentCodepointIdx + 1) % CODEPOINTS.size();
-	std::cout << "Current codepoint Idx: " << currentCodepointIdx << std::endl;
-	std::cout << "Codepoints length: " << CODEPOINTS.size() << std::endl;
+	catch (const std::exception &e)
+	{
+		std::cerr << "Exception caught: " << e.what() << std::endl;
+		return;
+	}
+	catch (...)
+	{
+		std::cerr << "Unknown exception caught" << std::endl;
+		return;
+	}
 }
 
 void printLaserStates(LaserStates &laserStates)
