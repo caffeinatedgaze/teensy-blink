@@ -1,15 +1,10 @@
-#include <Arduino.h>
-#include <cstdlib>
-#include <iostream>
-#include <SoftwareSerial.h>
-#include <Adafruit_AW9523.h>
-
 #include "morse.hpp"
 #include "codepoints.hpp"
 #include "patternExecutor.hpp"
 #include "main.hpp"
 
 PatternExecutor *patternExecutor;
+Adafruit_MCP23X17 mcp;
 
 LaserStates laserStates;
 uint64_t currentCodepointIdx = 0;
@@ -18,26 +13,52 @@ Signals currentCodepointMorseCode;
 // Refresh rate that is equal to the duration of Dit – the shortest Morse code signal.
 uint16_t refreshRate = 100; // in ms
 
-extern unsigned long _heap_start;
-extern unsigned long _heap_end;
-extern char *__brkval;
-
-int freeram()
+void mcpDigitalWriteCallback(PinIdx pinIdx, int state)
 {
-	return (char *)&_heap_end - __brkval;
+	mcp.digitalWrite(pinIdx, state);
+}
+
+// Make non-extended pins blink.
+void testNonExtendedPins()
+{
+	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
+	{
+		digitalWrite(j, HIGH);
+	}
+	delay(3000);
+	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
+	{
+		digitalWrite(j, LOW);
+	}
+	delay(1000);
+}
+
+// Make extended pins blink.
+void testExtendedPins()
+{
+	for (uint8_t j = 0; j < EXTENDED_PINS_N; j++)
+	{
+		mcpDigitalWriteCallback(j, HIGH);
+	}
+	delay(3000);
+	for (uint8_t j = 0; j < EXTENDED_PINS_N; j++)
+	{
+		mcpDigitalWriteCallback(j, LOW);
+	}
+	delay(1000);
 }
 
 void setup()
 {
-	// while (!bitRead(USB1_PORTSC1, 7) && !Serial && millis() < 15000)
-	while (!Serial && millis() < 15000)
+	while (bitRead(USB1_PORTSC1, 7) && !Serial && millis() < 15000)
+	// while (!Serial && millis() < 15000)
 	{
 		// wait for Arduino Serial Monitor to be ready
 	}
 	Serial.println("Serial port is ready.");
 	pinMode(LED_BUILTIN, OUTPUT);
 
-	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
+	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback);
 
 	if (0 == CODEPOINTS.size())
 	{
@@ -45,22 +66,26 @@ void setup()
 		exit(1);
 	}
 
-	// todo: enable all of the pins.
-	for (uint8_t i = 0; i < LASER_ARRAY_X; i++)
+	// Set all of the non-extended pins as outputs.
+	for (uint8_t j = 0; j < LASER_ARRAY_Y; j++)
 	{
-		for (uint8_t j = 0; j < LASER_ARRAY_Y; j++)
-		{
-			pinMode(j, OUTPUT);
-		}
+		pinMode(j, OUTPUT);
 	}
 
-	// Adafruit_AW9523 aw;
-	// if (!aw.begin(0x58))
-	// {
-	// 	std::cout << "AW9523 not found? Check wiring!" << std::endl;
-	// 	while (1)
-	// 		delay(10); // halt forever
-	// }
+	if (!mcp.begin_I2C())
+	{
+		Serial.println("Failed to connect to the externder module over I2C.");
+		while (1)
+			;
+	}
+
+	// Set all of the extended pins as outputs.
+	for (int i = 0; i < 16; i++)
+	{
+		mcp.pinMode(i, OUTPUT);
+	}
+	testNonExtendedPins();
+	testExtendedPins();
 }
 
 void teardown()
@@ -70,13 +95,8 @@ void teardown()
 
 void loop()
 {
-	for (uint8_t j = 0; j < 100; j++)
-	{
-		digitalWrite(j, LOW);
-	}
-
-	try
-	{
+	// try
+	// {
 	std::cout << "Picking the next codepoint." << std::endl;
 	currentCodepoint = CODEPOINTS.at(currentCodepointIdx);
 	currentCodepointMorseCode = encodeNumeral(currentCodepoint.c_str());
@@ -118,17 +138,17 @@ void loop()
 	std::cout << "Current codepoint Idx: " << currentCodepointIdx << std::endl;
 	std::cout << "Codepoints length: " << CODEPOINTS.size() << std::endl;
 	std::cout << "Free RAM: " << freeram() << std::endl;
-	}
-	catch (const std::exception &e)
-	{
-		std::cerr << "Exception caught: " << e.what() << std::endl;
-		return;
-	}
-	catch (...)
-	{
-		std::cerr << "Unknown exception caught" << std::endl;
-		return;
-	}
+	// }
+	// catch (const std::exception &e)
+	// {
+	// 	std::cerr << "Exception caught: " << e.what() << std::endl;
+	// 	return;
+	// }
+	// catch (...)
+	// {
+	// 	std::cerr << "Unknown exception caught" << std::endl;
+	// 	return;
+	// }
 }
 
 void printLaserStates(LaserStates &laserStates)
@@ -151,4 +171,9 @@ void printLaserStates(LaserStates &laserStates)
 		}
 		Serial.println();
 	}
+}
+
+int freeram()
+{
+	return (char *)&_heap_end - __brkval;
 }

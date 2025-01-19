@@ -9,7 +9,7 @@ upload:
 
 .PHONY: build
 build:
-	pio run
+	pio run -e release
 
 .PHONY: install-lib
 install-lib:

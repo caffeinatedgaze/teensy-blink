@@ -47,7 +47,20 @@ void PatternExecutor::setLaserState(bool laserState)
 	{
 	case TeensyType::Primary:
 	{
+		// Update state in the matrix.
 		laserStates.primaryLaserStates[currentLaserX][currentLaserY] = laserState;
+		// Retrieve the real pin number.
+		PinIdx pinIdx = pinByIdx.at(currentLaserY);
+		// If extended pin, then set using MCP.
+		if (currentLaserY >= NON_EXTENDED_PINS_N)
+		{
+			this->setExtendedPinCallback(pinIdx, laserState ? HIGH : LOW);
+		}
+		// If non-extended, then set using normal API.
+		else
+		{
+			analogWrite(currentLaserY, laserState ? HIGH : LOW);
+		}
 		break;
 	}
 	case TeensyType::Secondary:
@@ -57,5 +70,4 @@ void PatternExecutor::setLaserState(bool laserState)
 		break;
 	}
 	}
-	analogWrite(LED_BUILTIN, laserState ? HIGH : LOW);
 }
