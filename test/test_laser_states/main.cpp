@@ -251,6 +251,35 @@ void testLaserResetWhenMovingOnNTimes()
 	delete patternExecutor;
 }
 
+void testIsPinExtended()
+{
+	// Arrange
+	uint16_t arrayNumber1 = 0;
+	uint16_t idxInsideArray1 = 24;
+	uint16_t arrayNumber2 = 1;
+	uint16_t idxInsideArray2 = 24;
+	uint16_t arrayNumber3 = 1;
+	uint16_t idxInsideArray3 = 16;
+	uint16_t arrayNumber4 = 1;
+	uint16_t idxInsideArray4 = 8;
+	uint16_t arrayNumber5 = 1;
+	uint16_t idxInsideArray5 = 9;
+
+	// Act
+	bool result1 = isPinExtended(arrayNumber1, idxInsideArray1);
+	bool result2 = isPinExtended(arrayNumber2, idxInsideArray2);
+	bool result3 = isPinExtended(arrayNumber3, idxInsideArray3);
+	bool result4 = isPinExtended(arrayNumber4, idxInsideArray4);
+	bool result5 = isPinExtended(arrayNumber5, idxInsideArray5);
+
+	// Assert
+	TEST_ASSERT_EQUAL(false, result1);
+	TEST_ASSERT_EQUAL(true, result2);
+	TEST_ASSERT_EQUAL(true, result3);
+	TEST_ASSERT_EQUAL(false, result4);
+	TEST_ASSERT_EQUAL(true, result5);
+}
+
 void setup()
 {
 	pinMode(LED_BUILTIN, OUTPUT);
@@ -277,5 +306,6 @@ int main(void)
 	RUN_TEST(testLaserResetWhenMovingOn);
 	RUN_TEST(testLaserResetWhenMovingOn4Times);
 	RUN_TEST(testLaserResetWhenMovingOnNTimes);
+	RUN_TEST(testIsPinExtended);
 	UNITY_END();
 }

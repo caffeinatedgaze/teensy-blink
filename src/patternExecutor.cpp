@@ -53,7 +53,21 @@ bool isPinExtended(uint16_t arrayNumber, uint16_t idx)
 		return idx > NON_EXTENDED_PINS_N - LASER_ARRAY_Y - 1;
 	default:
 		std::cout << "Unexpected arrayNumber." << std::endl;
-		exit(1);
+	}
+}
+
+PinIdx getPinId(uint16_t arrayNumber, uint16_t idx)
+{
+	switch (arrayNumber)
+	{
+	case 0:
+		std::cout << "idx: " << idx << std::endl;
+		return pinByIdx.at(idx);
+	case 1:
+		std::cout << "idx + LASER_ARRAY_Y: " << idx + LASER_ARRAY_Y << std::endl;
+		return pinByIdx.at(idx + LASER_ARRAY_Y);
+	default:
+		std::cout << "Unexpected arrayNumber." << std::endl;
 	}
 }
 
@@ -66,17 +80,19 @@ void PatternExecutor::setLaserState(bool laserState)
 		// Update state in the matrix.
 		laserStates.primaryLaserStates[currentLaserX][currentLaserY] = laserState;
 		// Retrieve the real pin number.
-		PinIdx pinIdx = pinByIdx.at(currentLaserY);
+		PinIdx pinIdx = getPinId(currentLaserX, currentLaserY);
+
+		std::cout << "Real pin ID: " << (int)currentLaserX
+				  << " " << (int)currentLaserY << " " << (int)pinIdx << std::endl;
 		// If extended pin, then set using MCP.
 		if (isPinExtended(currentLaserX, currentLaserY))
 		{
 			this->setExtendedPinCallback(pinIdx, laserState ? HIGH : LOW);
-			std::cout << "Update extended pin: " << (int)currentLaserX << " " << (int)currentLaserY << " " << (int)pinIdx << std::endl;
 		}
 		// If non-extended, then set using normal API.
 		else
 		{
-			analogWrite(currentLaserY, laserState ? HIGH : LOW);
+			analogWrite(pinIdx, laserState ? HIGH : LOW);
 		}
 		break;
 	}

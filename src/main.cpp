@@ -11,7 +11,9 @@ uint64_t currentCodepointIdx = 0;
 std::string currentCodepoint;
 Signals currentCodepointMorseCode;
 // Refresh rate that is equal to the duration of Dit – the shortest Morse code signal.
-uint16_t refreshRate = 500; // in ms
+uint16_t refreshRate = 100; // in ms
+
+#define TEST_REFRESH_RATE 50
 
 void mcpDigitalWriteCallback(PinIdx pinIdx, int state)
 {
@@ -43,14 +45,14 @@ void testNonExtendedPins()
 	{
 		PinIdx pinIdx = pinByIdx.at(j);
 		digitalWrite(pinIdx, HIGH);
-		delay(200);
+		delay(TEST_REFRESH_RATE);
 	}
 	delay(3000);
 	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
 	{
 		PinIdx pinIdx = pinByIdx.at(j);
 		digitalWrite(pinIdx, LOW);
-		delay(200);
+		delay(TEST_REFRESH_RATE);
 	}
 }
 
@@ -61,14 +63,14 @@ void testExtendedPins()
 	{
 		PinIdx pinIdx = pinByIdx.at(j);
 		mcpDigitalWriteCallback(pinIdx, HIGH);
-		delay(200);
+		delay(TEST_REFRESH_RATE);
 	}
 	delay(3000);
 	for (uint8_t j = NON_EXTENDED_PINS_N; j < TOTAL_PINS_N; j++)
 	{
 		PinIdx pinIdx = pinByIdx.at(j);
 		mcpDigitalWriteCallback(pinIdx, LOW);
-		delay(200);
+		delay(TEST_REFRESH_RATE);
 	}
 }
 
