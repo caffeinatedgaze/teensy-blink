@@ -49,13 +49,14 @@ void loop()
 		// Set laser state according to the signal.
 		patternExecutor->setLaserState(signal->value);
 		analogWrite(LED_BUILTIN, signal->value ? HIGH : LOW);
-
 		// Wait for the signal duration.
 		while (signal->counter < signal->max_value)
 		{
 			delay(refreshRate);
 			signal->counter++;
 		}
+		// Move to the next laser according to the pattern.
+		patternExecutor->chooseNextLaser();
 	}
 
 	currentCodepointIdx = (currentCodepointIdx + 1) % CODEPOINTS.size();

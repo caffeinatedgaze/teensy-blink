@@ -16,8 +16,8 @@ void tearDown(void)
 void testInitialMatrix()
 {
 	// Arrange
-	bool expectedPrimaryLaserStates[24][24] = {false};
-	bool expectedSecondaryLaserStates[24][24] = {false};
+	bool expectedPrimaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
+	bool expectedSecondaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
 	LaserStates laserStates;
 
 	// Assert

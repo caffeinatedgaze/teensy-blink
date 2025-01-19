@@ -1,24 +1,31 @@
 #pragma once
 
 #include "main.hpp"
+#include <cstdint>
 
 enum class PatternType
 {
-	ZigZag,
-	Random
+	Linear,
 };
 
-// Changes the state of the laser array according to a pattern: zigzag or random.
+// Changes the state of the laser array according to a pattern.
 class PatternExecutor
 {
 public:
 	PatternType patternType;
-	TeensyType currentTeensyType = TeensyType::Primary;
 	LaserStates &laserStates;
 
-	PatternExecutor(PatternType patternType, LaserStates &laserStates) : patternType(patternType), laserStates(laserStates)
+	// Keep track of the current position in the laser array.
+	TeensyType currentTeensyType = TeensyType::Primary;
+	uint8_t currentLaserX = 0;
+	uint8_t currentLaserY = 0;
+
+	PatternExecutor(LaserStates &laserStates) : patternType(patternType), laserStates(laserStates)
 	{
 	}
+
+	// Switch between primary and secondary Teensy.
+	void switchTeensy();
 
 	// Choose the next laser according to the pattern.
 	void chooseNextLaser();
