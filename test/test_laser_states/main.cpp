@@ -40,7 +40,108 @@ void testSwitchTeensy()
 
 	// Assert
 	TEST_ASSERT_EQUAL(TeensyType::Secondary, patternExecutor->currentTeensyType);
-	
+
+	// Tear down
+	delete patternExecutor;
+}
+
+// Test that the laser is switched to the next one in linear manner from initial state.
+void testChooseNextLaserInitial()
+{
+	// Arrange
+	LaserStates laserStates;
+	PatternExecutor *patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
+
+	// Act
+	patternExecutor->chooseNextLaser();
+
+	// Assert
+	TEST_ASSERT_EQUAL(0, patternExecutor->currentLaserX);
+	TEST_ASSERT_EQUAL(1, patternExecutor->currentLaserY);
+	TEST_ASSERT_EQUAL(TeensyType::Primary, patternExecutor->currentTeensyType);
+}
+
+// Test that there is a switch between arrays inside the primary teensy.
+void testChooseNextLaserSwitchArrayInPrimary()
+{
+	// Arrange
+	LaserStates laserStates;
+	PatternExecutor *patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
+	patternExecutor->currentLaserY = LASER_ARRAY_Y - 1;
+
+	// Act
+	patternExecutor->chooseNextLaser();
+
+	// Assert
+	TEST_ASSERT_EQUAL(1, patternExecutor->currentLaserX);
+	TEST_ASSERT_EQUAL(0, patternExecutor->currentLaserY);
+	TEST_ASSERT_EQUAL(TeensyType::Primary, patternExecutor->currentTeensyType);
+
+	// Tear down
+	delete patternExecutor;
+}
+
+// Test that there is a switch between arrays inside the secondary teensy.
+void testChooseNextLaserSwitchArrayInSecondary()
+{
+	// Arrange
+	LaserStates laserStates;
+	PatternExecutor *patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
+	patternExecutor->currentLaserY = LASER_ARRAY_Y - 1;
+	patternExecutor->currentTeensyType = TeensyType::Secondary;
+
+	// Act
+	patternExecutor->chooseNextLaser();
+
+	// Assert
+	TEST_ASSERT_EQUAL(1, patternExecutor->currentLaserX);
+	TEST_ASSERT_EQUAL(0, patternExecutor->currentLaserY);
+	TEST_ASSERT_EQUAL(TeensyType::Secondary, patternExecutor->currentTeensyType);
+
+	// Tear down
+	delete patternExecutor;
+}
+
+// Test that there is a switch between teensy to secondary.
+void testChooseNextLaserSwitchTeensyToSecondary()
+{
+	// Arrange
+	LaserStates laserStates;
+	PatternExecutor *patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
+	patternExecutor->currentLaserY = LASER_ARRAY_Y - 1;
+	patternExecutor->currentTeensyType = TeensyType::Primary;
+	patternExecutor->currentLaserX = 1;
+
+	// Act
+	patternExecutor->chooseNextLaser();
+
+	// Assert
+	TEST_ASSERT_EQUAL(0, patternExecutor->currentLaserX);
+	TEST_ASSERT_EQUAL(0, patternExecutor->currentLaserY);
+	TEST_ASSERT_EQUAL(TeensyType::Secondary, patternExecutor->currentTeensyType);
+
+	// Tear down
+	delete patternExecutor;
+}
+
+// Test that there is a switch between teensy to primary.
+void testChooseNextLaserSwitchTeensyToPrimary()
+{
+	// Arrange
+	LaserStates laserStates;
+	PatternExecutor *patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
+	patternExecutor->currentLaserY = LASER_ARRAY_Y - 1;
+	patternExecutor->currentTeensyType = TeensyType::Secondary;
+	patternExecutor->currentLaserX = 1;
+
+	// Act
+	patternExecutor->chooseNextLaser();
+
+	// Assert
+	TEST_ASSERT_EQUAL(0, patternExecutor->currentLaserX);
+	TEST_ASSERT_EQUAL(0, patternExecutor->currentLaserY);
+	TEST_ASSERT_EQUAL(TeensyType::Primary, patternExecutor->currentTeensyType);
+
 	// Tear down
 	delete patternExecutor;
 }
@@ -63,5 +164,10 @@ int main(void)
 	setup();
 	RUN_TEST(testInitialMatrix);
 	RUN_TEST(testSwitchTeensy);
+	RUN_TEST(testChooseNextLaserInitial);
+	RUN_TEST(testChooseNextLaserSwitchArrayInPrimary);
+	RUN_TEST(testChooseNextLaserSwitchArrayInSecondary);
+	RUN_TEST(testChooseNextLaserSwitchTeensyToSecondary);
+	RUN_TEST(testChooseNextLaserSwitchTeensyToPrimary);
 	UNITY_END();
 }

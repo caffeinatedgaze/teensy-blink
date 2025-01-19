@@ -16,8 +16,11 @@ void PatternExecutor::switchTeensy()
 
 void PatternExecutor::chooseNextLaser()
 {
-	currentLaserX++;
-	if (currentLaserY >= LASER_ARRAY_Y)
+	// Move on.
+	currentLaserY++;
+
+	// Decide if you need to switch to another array or teensy.
+	if (currentLaserY == LASER_ARRAY_Y)
 	{
 		switch (currentLaserX)
 		{
