@@ -16,7 +16,7 @@
 #define EXTENDED_PINS_N 16
 #define TOTAL_PINS_N (NON_EXTENDED_PINS_N + EXTENDED_PINS_N)
 
-using PinIdx = uint8_t;
+using PinIdx = int;
 using PinMap = std::array<PinIdx, TOTAL_PINS_N>;
 extern PinMap pinByIdx;
 

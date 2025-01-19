@@ -11,11 +11,29 @@ uint64_t currentCodepointIdx = 0;
 std::string currentCodepoint;
 Signals currentCodepointMorseCode;
 // Refresh rate that is equal to the duration of Dit – the shortest Morse code signal.
-uint16_t refreshRate = 100; // in ms
+uint16_t refreshRate = 500; // in ms
 
 void mcpDigitalWriteCallback(PinIdx pinIdx, int state)
 {
 	mcp.digitalWrite(pinIdx, state);
+}
+
+void setAllPinsAsOutput()
+{
+	// Set all of the non-extended pins as outputs.
+	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
+	{
+		PinIdx pinIdx = pinByIdx.at(j);
+		pinMode(pinIdx, OUTPUT);
+		digitalWrite(pinIdx, LOW);
+	}
+	// Set all of the extended pins as outputs.
+	for (uint8_t j = NON_EXTENDED_PINS_N; j < TOTAL_PINS_N; j++)
+	{
+		PinIdx pinIdx = pinByIdx.at(j);
+		mcp.pinMode(pinIdx, OUTPUT);
+		mcp.digitalWrite(pinIdx, LOW);
+	}
 }
 
 // Make non-extended pins blink.
@@ -23,40 +41,51 @@ void testNonExtendedPins()
 {
 	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
 	{
-		digitalWrite(j, HIGH);
+		PinIdx pinIdx = pinByIdx.at(j);
+		digitalWrite(pinIdx, HIGH);
+		delay(200);
 	}
 	delay(3000);
 	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
 	{
-		digitalWrite(j, LOW);
+		PinIdx pinIdx = pinByIdx.at(j);
+		digitalWrite(pinIdx, LOW);
+		delay(200);
 	}
-	delay(1000);
 }
 
 // Make extended pins blink.
 void testExtendedPins()
 {
-	for (uint8_t j = 0; j < EXTENDED_PINS_N; j++)
+	for (uint8_t j = NON_EXTENDED_PINS_N; j < TOTAL_PINS_N; j++)
 	{
-		mcpDigitalWriteCallback(j, HIGH);
+		PinIdx pinIdx = pinByIdx.at(j);
+		mcpDigitalWriteCallback(pinIdx, HIGH);
+		delay(200);
 	}
 	delay(3000);
-	for (uint8_t j = 0; j < EXTENDED_PINS_N; j++)
+	for (uint8_t j = NON_EXTENDED_PINS_N; j < TOTAL_PINS_N; j++)
 	{
-		mcpDigitalWriteCallback(j, LOW);
+		PinIdx pinIdx = pinByIdx.at(j);
+		mcpDigitalWriteCallback(pinIdx, LOW);
+		delay(200);
 	}
-	delay(1000);
 }
 
 void setup()
 {
-	while (bitRead(USB1_PORTSC1, 7) && !Serial && millis() < 15000)
+	while (!bitRead(USB1_PORTSC1, 7) && !Serial && millis() < 15000)
 	// while (!Serial && millis() < 15000)
 	{
 		// wait for Arduino Serial Monitor to be ready
 	}
 	Serial.println("Serial port is ready.");
 	pinMode(LED_BUILTIN, OUTPUT);
+
+	for (size_t i = 0; i < pinByIdx.size(); i++)
+	{
+		std::cout << "pinN = " << i << " " << pinByIdx.at(i) << std::endl;
+	}
 
 	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback);
 
@@ -66,24 +95,14 @@ void setup()
 		exit(1);
 	}
 
-	// Set all of the non-extended pins as outputs.
-	for (uint8_t j = 0; j < LASER_ARRAY_Y; j++)
-	{
-		pinMode(j, OUTPUT);
-	}
-
 	if (!mcp.begin_I2C())
 	{
-		Serial.println("Failed to connect to the externder module over I2C.");
+		Serial.println("Failed to connect to the extender module over I2C.");
 		while (1)
 			;
 	}
 
-	// Set all of the extended pins as outputs.
-	for (int i = 0; i < 16; i++)
-	{
-		mcp.pinMode(i, OUTPUT);
-	}
+	setAllPinsAsOutput();
 	testNonExtendedPins();
 	testExtendedPins();
 }

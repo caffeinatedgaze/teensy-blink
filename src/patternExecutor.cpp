@@ -41,6 +41,22 @@ void PatternExecutor::chooseNextLaser()
 	}
 }
 
+// Decide if the pin is extended based on the array number and current index inside this array.
+bool isPinExtended(uint16_t arrayNumber, uint16_t idx)
+{
+	switch (arrayNumber)
+	{
+	case 0:
+		// Non of the elements in the first array are extended.
+		return false;
+	case 1:
+		return idx > NON_EXTENDED_PINS_N - LASER_ARRAY_Y - 1;
+	default:
+		std::cout << "Unexpected arrayNumber." << std::endl;
+		exit(1);
+	}
+}
+
 void PatternExecutor::setLaserState(bool laserState)
 {
 	switch (currentTeensyType)
@@ -52,9 +68,10 @@ void PatternExecutor::setLaserState(bool laserState)
 		// Retrieve the real pin number.
 		PinIdx pinIdx = pinByIdx.at(currentLaserY);
 		// If extended pin, then set using MCP.
-		if (currentLaserY >= NON_EXTENDED_PINS_N)
+		if (isPinExtended(currentLaserX, currentLaserY))
 		{
 			this->setExtendedPinCallback(pinIdx, laserState ? HIGH : LOW);
+			std::cout << "Update extended pin: " << (int)currentLaserX << " " << (int)currentLaserY << " " << (int)pinIdx << std::endl;
 		}
 		// If non-extended, then set using normal API.
 		else
