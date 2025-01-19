@@ -21,6 +21,12 @@ const std::vector<std::vector<bool>> morseCodeByDigit = {
 	{false, false, false, false, true}	 // 9: 4 Dahs, 1 Dit
 };
 
+#define DIT "dit"
+#define DAH "dah"
+#define LETTER_BREAK "."
+#define WORD_BREAK "|"
+#define SENTENCE_BREAK "break"
+
 // Base class for Signal types. It signifies either a letter or a break.
 class Signal
 {
@@ -53,7 +59,7 @@ public:
 
 	std::string getType() const override
 	{
-		return "dit";
+		return DIT;
 	}
 };
 
@@ -65,7 +71,7 @@ public:
 
 	std::string getType() const override
 	{
-		return "dah";
+		return DAH;
 	}
 };
 
@@ -77,7 +83,7 @@ public:
 
 	std::string getType() const override
 	{
-		return ".";
+		return LETTER_BREAK;
 	}
 };
 
@@ -88,7 +94,7 @@ public:
 
 	std::string getType() const override
 	{
-		return "|";
+		return WORD_BREAK;
 	}
 };
 
@@ -100,12 +106,13 @@ public:
 
 	std::string getType() const override
 	{
-		return "break";
+		return SENTENCE_BREAK;
 	}
 };
 
+using SignalPtr = std::shared_ptr<Signal>;
 // Representation of a codepoint in morse code (i.e. dits and dahs)
-using Signals = std::vector<std::shared_ptr<Signal>>;
+using Signals = std::vector<SignalPtr>;
 
 // Function to encode an Arabic numeral into a sequence of dits and dahs
 Signals encodeNumeral(const char numeral[4]);

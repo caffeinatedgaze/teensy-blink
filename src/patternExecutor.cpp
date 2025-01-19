@@ -16,6 +16,9 @@ void PatternExecutor::switchTeensy()
 
 void PatternExecutor::chooseNextLaser()
 {
+	// Turn off the current laser.
+	setLaserState(false);
+
 	// Move on.
 	currentLaserY++;
 

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <unity.h>
+#include <iostream>
 #include "main.hpp"
 #include "patternExecutor.hpp"
 #include "patternExecutor.cpp"
@@ -18,15 +19,25 @@ void tearDown(void)
 void testInitialMatrix()
 {
 	// Arrange
-	bool expectedPrimaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
-	bool expectedSecondaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
+	std::array<std::array<bool, LASER_ARRAY_Y>, LASER_ARRAY_X> expectedPrimaryLaserStates = {false};
+	std::array<std::array<bool, LASER_ARRAY_Y>, LASER_ARRAY_X> expectedSecondaryLaserStates = {false};
+	// bool expectedPrimaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
+	// bool expectedSecondaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
 	LaserStates laserStates;
 
 	// Assert
-	TEST_ASSERT_EQUAL_MEMORY(
-		expectedPrimaryLaserStates, laserStates.primaryLaserStates, sizeof(expectedPrimaryLaserStates));
-	TEST_ASSERT_EQUAL_MEMORY(
-		expectedSecondaryLaserStates, laserStates.secondaryLaserStates, sizeof(expectedPrimaryLaserStates));
+	for (int i = 0; i < LASER_ARRAY_X; i++)
+	{
+		for (int j = 0; j < LASER_ARRAY_Y; j++)
+		{
+			TEST_ASSERT_EQUAL(expectedPrimaryLaserStates.at(i).at(j), laserStates.primaryLaserStates.at(i).at(j));
+			TEST_ASSERT_EQUAL(expectedSecondaryLaserStates.at(i).at(j), laserStates.secondaryLaserStates.at(i).at(j));
+		}
+	}
+	// TEST_ASSERT_EQUAL_MEMORY(
+	// 	expectedPrimaryLaserStates, laserStates.primaryLaserStates, sizeof(expectedPrimaryLaserStates));
+	// TEST_ASSERT_EQUAL_MEMORY(
+	// 	expectedSecondaryLaserStates, laserStates.secondaryLaserStates, sizeof(expectedPrimaryLaserStates));
 }
 
 void testSwitchTeensy()
@@ -146,6 +157,88 @@ void testChooseNextLaserSwitchTeensyToPrimary()
 	delete patternExecutor;
 }
 
+// Test that the previous laser is set to off when moving on to the next one.
+void testLaserResetWhenMovingOn()
+{
+	// Arrange
+	LaserStates laserStates;
+	PatternExecutor *patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
+	patternExecutor->currentLaserY = 0;
+	patternExecutor->currentLaserX = 0;
+	patternExecutor->currentTeensyType = TeensyType::Primary;
+	patternExecutor->setLaserState(true);
+
+	// Act
+	patternExecutor->chooseNextLaser();
+	patternExecutor->setLaserState(true);
+
+	// Assert
+	TEST_ASSERT_EQUAL(false, laserStates.primaryLaserStates.at(0).at(0));
+	TEST_ASSERT_EQUAL(true, laserStates.primaryLaserStates.at(0).at(1));
+
+	// Tear down
+	delete patternExecutor;
+}
+
+// Test that all of the previous lasers are off when moving on to the next one 4 times.
+void testLaserResetWhenMovingOn4Times()
+{
+	// Arrange
+	LaserStates laserStates;
+	PatternExecutor *patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
+	patternExecutor->currentLaserY = 0;
+	patternExecutor->currentLaserX = 0;
+	patternExecutor->currentTeensyType = TeensyType::Primary;
+	patternExecutor->setLaserState(true);
+
+	// Act
+	for (int i = 0; i < 4; i++)
+	{
+		patternExecutor->chooseNextLaser();
+		patternExecutor->setLaserState(true);
+	}
+
+	// Assert
+	TEST_ASSERT_EQUAL(false, laserStates.primaryLaserStates.at(0).at(0));
+	TEST_ASSERT_EQUAL(false, laserStates.primaryLaserStates.at(0).at(1));
+	TEST_ASSERT_EQUAL(false, laserStates.primaryLaserStates.at(0).at(2));
+	TEST_ASSERT_EQUAL(false, laserStates.primaryLaserStates.at(0).at(3));
+	TEST_ASSERT_EQUAL(true, laserStates.primaryLaserStates.at(0).at(4));
+
+	// Tear down
+	delete patternExecutor;
+}
+
+// Test that all of the previous lasers are off when moving on to the next one N times.
+void testLaserResetWhenMovingOnNTimes()
+{
+	// Arrange
+	LaserStates laserStates;
+	PatternExecutor *patternExecutor = new PatternExecutor(PatternType::Linear, laserStates);
+	patternExecutor->currentLaserY = 0;
+	patternExecutor->currentLaserX = 0;
+	patternExecutor->currentTeensyType = TeensyType::Primary;
+	patternExecutor->setLaserState(true);
+	const int numberOfMoves = 16;
+
+	// Act
+	for (int i = 0; i < numberOfMoves; i++)
+	{
+		patternExecutor->chooseNextLaser();
+		patternExecutor->setLaserState(true);
+	}
+
+	// Assert
+	for (int i = 0; i < numberOfMoves; i++)
+	{
+		TEST_ASSERT_EQUAL(false, laserStates.primaryLaserStates.at(0).at(i));
+	}
+	TEST_ASSERT_EQUAL(true, laserStates.primaryLaserStates.at(0).at(numberOfMoves));
+
+	// Tear down
+	delete patternExecutor;
+}
+
 void setup()
 {
 	pinMode(LED_BUILTIN, OUTPUT);
@@ -169,5 +262,8 @@ int main(void)
 	RUN_TEST(testChooseNextLaserSwitchArrayInSecondary);
 	RUN_TEST(testChooseNextLaserSwitchTeensyToSecondary);
 	RUN_TEST(testChooseNextLaserSwitchTeensyToPrimary);
+	RUN_TEST(testLaserResetWhenMovingOn);
+	RUN_TEST(testLaserResetWhenMovingOn4Times);
+	RUN_TEST(testLaserResetWhenMovingOnNTimes);
 	UNITY_END();
 }

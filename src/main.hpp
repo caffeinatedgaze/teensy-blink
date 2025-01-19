@@ -6,8 +6,10 @@
 struct LaserStates
 // States (on/off) of lasers in each array.
 {
-	bool primaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
-	bool secondaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
+	// bool primaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
+	// bool secondaryLaserStates[LASER_ARRAY_X][LASER_ARRAY_Y] = {false};
+	std::array<std::array<bool, LASER_ARRAY_Y>, LASER_ARRAY_X> primaryLaserStates = {false};
+	std::array<std::array<bool, LASER_ARRAY_Y>, LASER_ARRAY_X> secondaryLaserStates = {false};
 };
 
 enum class TeensyType
@@ -17,24 +19,4 @@ enum class TeensyType
 };
 
 
-void printLaserStates(LaserStates &laserStates)
-{
-	Serial.println("Primary laser states:");
-	for (uint8_t x = 0; x < LASER_ARRAY_X; x++)
-	{
-		for (uint8_t y = 0; y < LASER_ARRAY_Y; y++)
-		{
-			Serial.print(laserStates.primaryLaserStates[x][y]);
-		}
-		Serial.println();
-	}
-	Serial.println("Secondary laser states:");
-	for (uint8_t x = 0; x < LASER_ARRAY_X; x++)
-	{
-		for (uint8_t y = 0; y < LASER_ARRAY_Y; y++)
-		{
-			Serial.print(laserStates.secondaryLaserStates[x][y]);
-		}
-		Serial.println();
-	}
-}
+void printLaserStates(LaserStates &laserStates);

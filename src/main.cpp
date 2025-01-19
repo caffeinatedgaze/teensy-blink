@@ -13,7 +13,7 @@ uint64_t currentCodepointIdx = 0;
 std::string currentCodepoint;
 Signals currentCodepointMorseCode;
 // Refresh rate that is equal to the duration of Dit – the shortest Morse code signal.
-uint16_t refreshRate = 200; // in ms
+uint16_t refreshRate = 100; // in ms
 
 void setup()
 {
@@ -44,10 +44,15 @@ void loop()
 	currentCodepointMorseCode = encodeNumeral(currentCodepoint.c_str());
 	printSignals(currentCodepointMorseCode);
 
-	for (const auto &signal : currentCodepointMorseCode)
+	for (uint8_t i = 0; i < currentCodepointMorseCode.size(); i++)
 	{
+		SignalPtr signal = currentCodepointMorseCode[i];
+
 		// Set laser state according to the signal.
 		patternExecutor->setLaserState(signal->value);
+		std::cout << "Current signal type: " << signal->getType() << std::endl;
+		printLaserStates(laserStates);
+		// Blink the built-in LED.
 		analogWrite(LED_BUILTIN, signal->value ? HIGH : LOW);
 		// Wait for the signal duration.
 		while (signal->counter < signal->max_value)
@@ -56,19 +61,40 @@ void loop()
 			signal->counter++;
 		}
 		// Move to the next laser according to the pattern.
-		patternExecutor->chooseNextLaser();
+		// Do not move if the next signal type is a break.
+		std::string currentCodepointType = currentCodepointMorseCode[i + 1]->getType();
+		if (
+			currentCodepointType != LETTER_BREAK &&
+			currentCodepointType != WORD_BREAK &&
+			currentCodepointType != SENTENCE_BREAK)
+		{
+			patternExecutor->chooseNextLaser();
+		}
 	}
 
 	currentCodepointIdx = (currentCodepointIdx + 1) % CODEPOINTS.size();
 	std::cout << "Current codepoint Idx: " << currentCodepointIdx << std::endl;
 	std::cout << "Codepoints length: " << CODEPOINTS.size() << std::endl;
+}
 
-	// initialize pattern producer with the matrix and its dimensions
-	// getCodepoint from the translated sequence.
-	// convert codepoint into morse code (i.e. Dits, Dahs, and breaks).
-	// iterate over each signal of the codepoint's morse code and
-	// pass its value - on/off - into the current pattern producer (i.e. ZigZag or Random).
-	//
-	// wait for the break duration.
-	// ... repeat.
+void printLaserStates(LaserStates &laserStates)
+{
+	Serial.println("Primary laser states:");
+	for (uint8_t x = 0; x < LASER_ARRAY_X; x++)
+	{
+		for (uint8_t y = 0; y < LASER_ARRAY_Y; y++)
+		{
+			Serial.print(laserStates.primaryLaserStates.at(x).at(y));
+		}
+		Serial.println();
+	}
+	Serial.println("Secondary laser states:");
+	for (uint8_t x = 0; x < LASER_ARRAY_X; x++)
+	{
+		for (uint8_t y = 0; y < LASER_ARRAY_Y; y++)
+		{
+			Serial.print(laserStates.secondaryLaserStates.at(x).at(y));
+		}
+		Serial.println();
+	}
 }
