@@ -15,6 +15,15 @@ Signals currentCodepointMorseCode;
 // Refresh rate that is equal to the duration of Dit – the shortest Morse code signal.
 uint16_t refreshRate = 100; // in ms
 
+extern unsigned long _heap_start;
+extern unsigned long _heap_end;
+extern char *__brkval;
+
+int freeram()
+{
+	return (char *)&_heap_end - __brkval;
+}
+
 void setup()
 {
 	while (!Serial && millis() < 15000)
@@ -42,13 +51,15 @@ void loop()
 {
 	try
 	{
-		currentCodepoint = CODEPOINTS[currentCodepointIdx];
+		std::cout << "Picking the next codepoint." << std::endl;
+		currentCodepoint = CODEPOINTS.at(currentCodepointIdx);
 		currentCodepointMorseCode = encodeNumeral(currentCodepoint.c_str());
 		printSignals(currentCodepointMorseCode);
+		std::cout << "Morse code length: " << currentCodepointMorseCode.size() << std::endl;
 
-		for (uint8_t i = 0; i < currentCodepointMorseCode.size(); i++)
+		for (size_t i = 0; i < currentCodepointMorseCode.size(); i++)
 		{
-			SignalPtr signal = currentCodepointMorseCode[i];
+			SignalPtr signal = currentCodepointMorseCode.at(i);
 
 			// Set laser state according to the signal.
 			patternExecutor->setLaserState(signal->value);
@@ -64,19 +75,23 @@ void loop()
 			}
 			// Move to the next laser according to the pattern.
 			// Do not move if the next signal type is a break.
-			std::string currentCodepointType = currentCodepointMorseCode[i + 1]->getType();
-			if (
-				currentCodepointType != LETTER_BREAK &&
-				currentCodepointType != WORD_BREAK &&
-				currentCodepointType != SENTENCE_BREAK)
+			if (i + 1 < currentCodepointMorseCode.size())
 			{
-				patternExecutor->chooseNextLaser();
+				std::string currentCodepointType = currentCodepointMorseCode.at(i + 1)->getType();
+				if (
+					currentCodepointType != LETTER_BREAK &&
+					currentCodepointType != WORD_BREAK &&
+					currentCodepointType != SENTENCE_BREAK)
+				{
+					patternExecutor->chooseNextLaser();
+				}
 			}
 		}
 
 		currentCodepointIdx = (currentCodepointIdx + 1) % CODEPOINTS.size();
 		std::cout << "Current codepoint Idx: " << currentCodepointIdx << std::endl;
 		std::cout << "Codepoints length: " << CODEPOINTS.size() << std::endl;
+		std::cout << "Free RAM: " << freeram() << std::endl;
 	}
 	catch (const std::exception &e)
 	{
