@@ -95,7 +95,7 @@ void setup()
 		std::cout << "pinN = " << i << " " << pinByIdx.at(i) << std::endl;
 	}
 
-	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback, writeSerialCallback);
+	patternExecutor = new LinearPatternExecutor(laserStates, mcpDigitalWriteCallback, writeSerialCallback);
 
 	if (0 == CODEPOINTS.size())
 	{
@@ -110,6 +110,7 @@ void setup()
 			;
 	}
 
+	writeSerialCallback("RESET");
 	setAllPinsAsOutput();
 	testPins();
 }

@@ -14,33 +14,6 @@ void PatternExecutor::switchTeensy()
 	}
 }
 
-void PatternExecutor::chooseNextLaser()
-{
-	// Turn off the current laser.
-	setLaserState(false);
-
-	// Move on.
-	currentLaserY++;
-
-	// Decide if you need to switch to another array or teensy.
-	if (currentLaserY == LASER_ARRAY_Y)
-	{
-		switch (currentLaserX)
-		{
-		case 0:
-			// Move the next line of lasers inside the current teensy.
-			currentLaserX = 1;
-			break;
-		case 1:
-			// Switch to the other teensy.
-			switchTeensy();
-			currentLaserX = 0;
-			break;
-		}
-		currentLaserY = 0;
-	}
-}
-
 // Decide if the pin is extended based on the array number and current index inside this array.
 bool isPinExtended(uint16_t arrayNumber, uint16_t idx)
 {
@@ -114,5 +87,32 @@ void PatternExecutor::setLaserState(PinIdx pinIdx, bool laserState, bool isExten
 	else
 	{
 		digitalWrite(pinIdx, laserState ? HIGH : LOW);
+	}
+}
+
+void LinearPatternExecutor::chooseNextLaser()
+{
+	// Turn off the current laser.
+	setLaserState(false);
+
+	// Move on.
+	currentLaserY++;
+
+	// Decide if you need to switch to another array or teensy.
+	if (currentLaserY == LASER_ARRAY_Y)
+	{
+		switch (currentLaserX)
+		{
+		case 0:
+			// Move the next line of lasers inside the current teensy.
+			currentLaserX = 1;
+			break;
+		case 1:
+			// Switch to the other teensy.
+			switchTeensy();
+			currentLaserX = 0;
+			break;
+		}
+		currentLaserY = 0;
 	}
 }

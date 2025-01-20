@@ -15,7 +15,6 @@ using WriteSerialCallback = std::function<void(const std::string &)>;
 class PatternExecutor
 {
 public:
-	PatternType patternType;
 	LaserStates &laserStates;
 
 	SetExtendedPinCallback setExtendedPinCallback;
@@ -27,11 +26,9 @@ public:
 	uint8_t currentLaserY = 0;
 
 	PatternExecutor(
-		PatternType patternType,
 		LaserStates &laserStates,
 		SetExtendedPinCallback setExtendedPinCallback,
-		WriteSerialCallback writeSerialCallback) : patternType(patternType),
-												   laserStates(laserStates),
+		WriteSerialCallback writeSerialCallback) : laserStates(laserStates),
 												   setExtendedPinCallback(setExtendedPinCallback),
 												   writeSerialCallback(writeSerialCallback)
 	{
@@ -41,11 +38,26 @@ public:
 	void switchTeensy();
 
 	// Choose the next laser according to the pattern.
-	void chooseNextLaser();
+	virtual void chooseNextLaser() = 0;
 
 	// Update the laser array in the primary as well as send command to the secondary.
 	void setLaserState(bool laserState);
 
 	// Set a certain laser pin.
 	void setLaserState(PinIdx pinIdx, bool laserState, bool isExtended);
+};
+
+class LinearPatternExecutor : public PatternExecutor
+{
+public:
+	LinearPatternExecutor(
+		LaserStates &laserStates,
+		SetExtendedPinCallback setExtendedPinCallback,
+		WriteSerialCallback writeSerialCallback) : PatternExecutor(laserStates,
+																   setExtendedPinCallback,
+																   writeSerialCallback)
+	{
+	}
+
+	void chooseNextLaser() override;
 };

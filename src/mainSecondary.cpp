@@ -162,6 +162,14 @@
 // 			setAllPinsAsOutput();
 // 			testPins();
 // 		}
+// 		else if (cmd.cmd == "RESET")
+// 		{
+// 			Serial.print("Command: ");
+// 			Serial.println(cmd.cmd.c_str());
+// 			Serial.println("Resetting all pins.");
+// 			setAllPinsAsOutput();
+// 			testPins();
+// 		}
 // 		else
 // 		{
 // 			Serial.println("Unknown command");
