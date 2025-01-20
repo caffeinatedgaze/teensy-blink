@@ -44,8 +44,8 @@
 // 	}
 // }
 
-// // Make non-extended pins blink.
-// void testNonExtendedPins()
+// // Make pins blink.
+// void testPins()
 // {
 // 	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
 // 	{
@@ -53,18 +53,6 @@
 // 		digitalWrite(pinIdx, HIGH);
 // 		delay(TEST_REFRESH_RATE);
 // 	}
-// 	delay(3000);
-// 	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
-// 	{
-// 		PinIdx pinIdx = pinByIdx.at(j);
-// 		digitalWrite(pinIdx, LOW);
-// 		delay(TEST_REFRESH_RATE);
-// 	}
-// }
-
-// // Make extended pins blink.
-// void testExtendedPins()
-// {
 // 	for (uint8_t j = NON_EXTENDED_PINS_N; j < TOTAL_PINS_N; j++)
 // 	{
 // 		PinIdx pinIdx = pinByIdx.at(j);
@@ -76,6 +64,12 @@
 // 	{
 // 		PinIdx pinIdx = pinByIdx.at(j);
 // 		mcpDigitalWriteCallback(pinIdx, LOW);
+// 		delay(TEST_REFRESH_RATE);
+// 	}
+// 	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
+// 	{
+// 		PinIdx pinIdx = pinByIdx.at(j);
+// 		digitalWrite(pinIdx, LOW);
 // 		delay(TEST_REFRESH_RATE);
 // 	}
 // }
@@ -98,10 +92,9 @@
 // 			;
 // 	}
 
-//  patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback, writeSerialCallback);
+// 	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback, writeSerialCallback);
 // 	setAllPinsAsOutput();
-// 	testNonExtendedPins();
-// 	testExtendedPins();
+// 	testPins();
 // }
 
 // void teardown()
@@ -160,6 +153,14 @@
 
 // 			std::cout << "Setting laser state." << std::endl;
 // 			patternExecutor->setLaserState(cmd.pinIdx, cmd.state, cmd.isExtended);
+// 		}
+// 		else if (cmd.cmd == "BLINK")
+// 		{
+// 			Serial.print("Command: ");
+// 			Serial.println(cmd.cmd.c_str());
+// 			Serial.println("Blinking all pins.");
+// 			setAllPinsAsOutput();
+// 			testPins();
 // 		}
 // 		else
 // 		{

@@ -26,7 +26,7 @@ void mcpDigitalWriteCallback(PinIdx pinIdx, int state)
 	mcp.digitalWrite(pinIdx, state);
 }
 
-void mockedWriteSerialCallback(const std::string &command)
+void writeSerialCallback(const std::string &command)
 {
 	mySerial.println(command.c_str());
 }
@@ -49,8 +49,8 @@ void setAllPinsAsOutput()
 	}
 }
 
-// Make non-extended pins blink.
-void testNonExtendedPins()
+// Make pins blink.
+void testPins()
 {
 	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
 	{
@@ -58,18 +58,6 @@ void testNonExtendedPins()
 		digitalWrite(pinIdx, HIGH);
 		delay(TEST_REFRESH_RATE);
 	}
-	delay(3000);
-	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
-	{
-		PinIdx pinIdx = pinByIdx.at(j);
-		digitalWrite(pinIdx, LOW);
-		delay(TEST_REFRESH_RATE);
-	}
-}
-
-// Make extended pins blink.
-void testExtendedPins()
-{
 	for (uint8_t j = NON_EXTENDED_PINS_N; j < TOTAL_PINS_N; j++)
 	{
 		PinIdx pinIdx = pinByIdx.at(j);
@@ -81,6 +69,12 @@ void testExtendedPins()
 	{
 		PinIdx pinIdx = pinByIdx.at(j);
 		mcpDigitalWriteCallback(pinIdx, LOW);
+		delay(TEST_REFRESH_RATE);
+	}
+	for (uint8_t j = 0; j < NON_EXTENDED_PINS_N; j++)
+	{
+		PinIdx pinIdx = pinByIdx.at(j);
+		digitalWrite(pinIdx, LOW);
 		delay(TEST_REFRESH_RATE);
 	}
 }
@@ -101,7 +95,7 @@ void setup()
 		std::cout << "pinN = " << i << " " << pinByIdx.at(i) << std::endl;
 	}
 
-	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback, mockedWriteSerialCallback);
+	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback, writeSerialCallback);
 
 	if (0 == CODEPOINTS.size())
 	{
@@ -117,14 +111,15 @@ void setup()
 	}
 
 	setAllPinsAsOutput();
-	testNonExtendedPins();
-	testExtendedPins();
+	testPins();
 }
 
 void teardown()
 {
 	delete patternExecutor;
 }
+
+uint moveCount = 0;
 
 void loop()
 {
@@ -159,10 +154,18 @@ void loop()
 				currentCodepointType != SENTENCE_BREAK)
 			{
 				patternExecutor->chooseNextLaser();
+				moveCount++;
+
+				if (moveCount % 100 == 0)
+				{
+					std::cout << "Blink." << std::endl;
+					writeSerialCallback("BLINK");
+					setAllPinsAsOutput();
+					testPins();
+				}
 			}
 		}
 	}
-
 	currentCodepointIdx = (currentCodepointIdx + 1) % CODEPOINTS.size();
 	std::cout << "Current codepoint Idx: " << currentCodepointIdx << std::endl;
 	std::cout << "Codepoints length: " << CODEPOINTS.size() << std::endl;
