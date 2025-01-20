@@ -7,6 +7,7 @@
 #include "constants.cpp"
 
 void mockedSetExtendedPinCallback(PinIdx pinIdx, int state) {};
+void mockedWriteSerialCallback(const std::string &command) {};
 
 void setUp(void)
 {
@@ -48,7 +49,7 @@ void testSwitchTeensy()
 	// Arrange
 	LaserStates laserStates;
 	PatternExecutor *patternExecutor = new PatternExecutor(
-		PatternType::Linear, laserStates, mockedSetExtendedPinCallback);
+		PatternType::Linear, laserStates, mockedSetExtendedPinCallback, mockedWriteSerialCallback);
 
 	// Act
 	patternExecutor->switchTeensy();
@@ -66,7 +67,7 @@ void testChooseNextLaserInitial()
 	// Arrange
 	LaserStates laserStates;
 	PatternExecutor *patternExecutor = new PatternExecutor(
-		PatternType::Linear, laserStates, mockedSetExtendedPinCallback);
+		PatternType::Linear, laserStates, mockedSetExtendedPinCallback, mockedWriteSerialCallback);
 
 	// Act
 	patternExecutor->chooseNextLaser();
@@ -83,7 +84,7 @@ void testChooseNextLaserSwitchArrayInPrimary()
 	// Arrange
 	LaserStates laserStates;
 	PatternExecutor *patternExecutor = new PatternExecutor(
-		PatternType::Linear, laserStates, mockedSetExtendedPinCallback);
+		PatternType::Linear, laserStates, mockedSetExtendedPinCallback, mockedWriteSerialCallback);
 	patternExecutor->currentLaserY = LASER_ARRAY_Y - 1;
 
 	// Act
@@ -104,7 +105,7 @@ void testChooseNextLaserSwitchArrayInSecondary()
 	// Arrange
 	LaserStates laserStates;
 	PatternExecutor *patternExecutor = new PatternExecutor(
-		PatternType::Linear, laserStates, mockedSetExtendedPinCallback);
+		PatternType::Linear, laserStates, mockedSetExtendedPinCallback, mockedWriteSerialCallback);
 	patternExecutor->currentLaserY = LASER_ARRAY_Y - 1;
 	patternExecutor->currentTeensyType = TeensyType::Secondary;
 
@@ -126,7 +127,7 @@ void testChooseNextLaserSwitchTeensyToSecondary()
 	// Arrange
 	LaserStates laserStates;
 	PatternExecutor *patternExecutor = new PatternExecutor(
-		PatternType::Linear, laserStates, mockedSetExtendedPinCallback);
+		PatternType::Linear, laserStates, mockedSetExtendedPinCallback, mockedWriteSerialCallback);
 	patternExecutor->currentLaserY = LASER_ARRAY_Y - 1;
 	patternExecutor->currentTeensyType = TeensyType::Primary;
 	patternExecutor->currentLaserX = 1;
@@ -149,7 +150,7 @@ void testChooseNextLaserSwitchTeensyToPrimary()
 	// Arrange
 	LaserStates laserStates;
 	PatternExecutor *patternExecutor = new PatternExecutor(
-		PatternType::Linear, laserStates, mockedSetExtendedPinCallback);
+		PatternType::Linear, laserStates, mockedSetExtendedPinCallback, mockedWriteSerialCallback);
 	patternExecutor->currentLaserY = LASER_ARRAY_Y - 1;
 	patternExecutor->currentTeensyType = TeensyType::Secondary;
 	patternExecutor->currentLaserX = 1;
@@ -172,7 +173,7 @@ void testLaserResetWhenMovingOn()
 	// Arrange
 	LaserStates laserStates;
 	PatternExecutor *patternExecutor = new PatternExecutor(
-		PatternType::Linear, laserStates, mockedSetExtendedPinCallback);
+		PatternType::Linear, laserStates, mockedSetExtendedPinCallback, mockedWriteSerialCallback);
 	patternExecutor->currentLaserY = 0;
 	patternExecutor->currentLaserX = 0;
 	patternExecutor->currentTeensyType = TeensyType::Primary;
@@ -196,7 +197,7 @@ void testLaserResetWhenMovingOn4Times()
 	// Arrange
 	LaserStates laserStates;
 	PatternExecutor *patternExecutor = new PatternExecutor(
-		PatternType::Linear, laserStates, mockedSetExtendedPinCallback);
+		PatternType::Linear, laserStates, mockedSetExtendedPinCallback, mockedWriteSerialCallback);
 	patternExecutor->currentLaserY = 0;
 	patternExecutor->currentLaserX = 0;
 	patternExecutor->currentTeensyType = TeensyType::Primary;
@@ -226,7 +227,7 @@ void testLaserResetWhenMovingOnNTimes()
 	// Arrange
 	LaserStates laserStates;
 	PatternExecutor *patternExecutor = new PatternExecutor(
-		PatternType::Linear, laserStates, mockedSetExtendedPinCallback);
+		PatternType::Linear, laserStates, mockedSetExtendedPinCallback, mockedWriteSerialCallback);
 	patternExecutor->currentLaserY = 0;
 	patternExecutor->currentLaserX = 0;
 	patternExecutor->currentTeensyType = TeensyType::Primary;

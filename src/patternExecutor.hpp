@@ -9,6 +9,7 @@ enum class PatternType
 };
 
 using SetExtendedPinCallback = std::function<void(PinIdx, int)>;
+using WriteSerialCallback = std::function<void(const std::string &)>;
 
 // Changes the state of the laser array according to a pattern.
 class PatternExecutor
@@ -18,6 +19,7 @@ public:
 	LaserStates &laserStates;
 
 	SetExtendedPinCallback setExtendedPinCallback;
+	WriteSerialCallback writeSerialCallback;
 
 	// Keep track of the current position in the laser array.
 	TeensyType currentTeensyType = TeensyType::Primary;
@@ -27,9 +29,11 @@ public:
 	PatternExecutor(
 		PatternType patternType,
 		LaserStates &laserStates,
-		SetExtendedPinCallback setExtendedPinCallback) : patternType(patternType),
-														 laserStates(laserStates),
-														 setExtendedPinCallback(setExtendedPinCallback)
+		SetExtendedPinCallback setExtendedPinCallback,
+		WriteSerialCallback writeSerialCallback) : patternType(patternType),
+												   laserStates(laserStates),
+												   setExtendedPinCallback(setExtendedPinCallback),
+												   writeSerialCallback(writeSerialCallback)
 	{
 	}
 

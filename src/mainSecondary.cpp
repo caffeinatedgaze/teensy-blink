@@ -21,6 +21,11 @@
 // 	mcp.digitalWrite(pinIdx, state);
 // }
 
+// void writeSerialCallback(const std::string &command)
+// {
+// 	mySerial.println(command.c_str());
+// }
+
 // void setAllPinsAsOutput()
 // {
 // 	// Set all of the non-extended pins as outputs.
@@ -93,7 +98,7 @@
 // 			;
 // 	}
 
-// 	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback);
+//  patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback, writeSerialCallback);
 // 	setAllPinsAsOutput();
 // 	testNonExtendedPins();
 // 	testExtendedPins();

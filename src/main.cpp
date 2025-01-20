@@ -26,6 +26,11 @@ void mcpDigitalWriteCallback(PinIdx pinIdx, int state)
 	mcp.digitalWrite(pinIdx, state);
 }
 
+void mockedWriteSerialCallback(const std::string &command)
+{
+	mySerial.println(command.c_str());
+}
+
 void setAllPinsAsOutput()
 {
 	// Set all of the non-extended pins as outputs.
@@ -96,7 +101,7 @@ void setup()
 		std::cout << "pinN = " << i << " " << pinByIdx.at(i) << std::endl;
 	}
 
-	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback);
+	patternExecutor = new PatternExecutor(PatternType::Linear, laserStates, mcpDigitalWriteCallback, mockedWriteSerialCallback);
 
 	if (0 == CODEPOINTS.size())
 	{

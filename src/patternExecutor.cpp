@@ -99,13 +99,7 @@ void PatternExecutor::setLaserState(bool laserState)
 		PinIdx pinIdx = getPinId(currentLaserX, currentLaserY);
 		std::string command = "SET " + std::to_string(pinIdx) + " " + std::to_string(isPinExtended(currentLaserX, currentLaserY)) + " " + std::to_string(laserState);
 		std::cout << command << std::endl;
-		mySerial.println(command.c_str());
-		// mySerial.print("SET ");
-		// mySerial.print(pinIdx);
-		// mySerial.print(" ");
-		// mySerial.print(isPinExtended(currentLaserX, currentLaserY));
-		// mySerial.print(" ");
-		// mySerial.println(laserState ? "HIGH" : "LOW");
+		this->writeSerialCallback(command);
 		break;
 	}
 	}
