@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "patternExecutor.hpp"
 
+std::array<PatternType, 3> patternTypes = {PatternType::Linear, PatternType::Random, PatternType::Hiuyan};
+
 void PatternExecutor::switchTeensy()
 {
 	switch (currentTeensyType)
@@ -115,4 +117,26 @@ void LinearPatternExecutor::chooseNextLaser()
 		}
 		currentLaserY = 0;
 	}
+}
+
+void RandomPatternExecutor::chooseNextLaser()
+{
+	// Turn off the current laser.
+	setLaserState(false);
+
+	// Move on.
+	currentLaserY = random(0, LASER_ARRAY_Y);
+	currentLaserX = random(0, LASER_ARRAY_X);
+	currentTeensyType = random(0, 2) == 0 ? TeensyType::Primary : TeensyType::Secondary;
+}
+
+void HiuyanPatternExecutor::chooseNextLaser()
+{
+	// Turn off the current laser.
+	setLaserState(false);
+
+	// Move on.
+	currentLaserY = random(0, LASER_ARRAY_Y);
+	currentLaserX = random(0, LASER_ARRAY_X);
+	currentTeensyType = random(0, 2) == 0 ? TeensyType::Primary : TeensyType::Secondary;
 }

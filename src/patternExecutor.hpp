@@ -6,7 +6,11 @@
 enum class PatternType
 {
 	Linear,
+	Random,
+	Hiuyan,
 };
+
+extern std::array<PatternType, 3> patternTypes;
 
 using SetExtendedPinCallback = std::function<void(PinIdx, int)>;
 using WriteSerialCallback = std::function<void(const std::string &)>;
@@ -51,6 +55,36 @@ class LinearPatternExecutor : public PatternExecutor
 {
 public:
 	LinearPatternExecutor(
+		LaserStates &laserStates,
+		SetExtendedPinCallback setExtendedPinCallback,
+		WriteSerialCallback writeSerialCallback) : PatternExecutor(laserStates,
+																   setExtendedPinCallback,
+																   writeSerialCallback)
+	{
+	}
+
+	void chooseNextLaser() override;
+};
+
+class RandomPatternExecutor : public PatternExecutor
+{
+public:
+	RandomPatternExecutor(
+		LaserStates &laserStates,
+		SetExtendedPinCallback setExtendedPinCallback,
+		WriteSerialCallback writeSerialCallback) : PatternExecutor(laserStates,
+																   setExtendedPinCallback,
+																   writeSerialCallback)
+	{
+	}
+
+	void chooseNextLaser() override;
+};
+
+class HiuyanPatternExecutor : public PatternExecutor
+{
+public:
+	HiuyanPatternExecutor(
 		LaserStates &laserStates,
 		SetExtendedPinCallback setExtendedPinCallback,
 		WriteSerialCallback writeSerialCallback) : PatternExecutor(laserStates,

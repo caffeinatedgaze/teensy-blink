@@ -3,7 +3,7 @@
 #include "patternExecutor.hpp"
 #include "main.hpp"
 
-PatternExecutor *patternExecutor;
+std::unique_ptr<PatternExecutor> patternExecutor = NULL;
 Adafruit_MCP23X17 mcp;
 
 LaserStates laserStates;
@@ -11,7 +11,8 @@ uint64_t currentCodepointIdx = 0;
 std::string currentCodepoint;
 Signals currentCodepointMorseCode;
 // Refresh rate that is equal to the duration of Dit – the shortest Morse code signal.
-uint16_t refreshRate = 50; // in ms
+uint16_t refreshRate = 50;	   // in ms
+uint8_t currentPatternIdx = 0; // idx of the pattern in patternTypes.
 
 // Serial port to the secondary.
 const int rxPin = 21;
@@ -46,6 +47,22 @@ void setAllPinsAsOutput()
 		PinIdx pinIdx = pinByIdx.at(j);
 		mcp.pinMode(pinIdx, OUTPUT);
 		mcp.digitalWrite(pinIdx, LOW);
+	}
+}
+
+void switchPatternExecutor(PatternType patternType)
+{
+	switch (patternType)
+	{
+	case PatternType::Linear:
+		patternExecutor = std::make_unique<LinearPatternExecutor>(laserStates, mcpDigitalWriteCallback, writeSerialCallback);
+		break;
+	case PatternType::Random:
+		patternExecutor = std::make_unique<RandomPatternExecutor>(laserStates, mcpDigitalWriteCallback, writeSerialCallback);
+		break;
+	case PatternType::Hiuyan:
+		patternExecutor = std::make_unique<HiuyanPatternExecutor>(laserStates, mcpDigitalWriteCallback, writeSerialCallback);
+		break;
 	}
 }
 
@@ -95,7 +112,7 @@ void setup()
 		std::cout << "pinN = " << i << " " << pinByIdx.at(i) << std::endl;
 	}
 
-	patternExecutor = new LinearPatternExecutor(laserStates, mcpDigitalWriteCallback, writeSerialCallback);
+	switchPatternExecutor(patternTypes.at(0));
 
 	if (0 == CODEPOINTS.size())
 	{
@@ -117,7 +134,6 @@ void setup()
 
 void teardown()
 {
-	delete patternExecutor;
 }
 
 uint moveCount = 0;
@@ -163,6 +179,10 @@ void loop()
 					writeSerialCallback("BLINK");
 					setAllPinsAsOutput();
 					testPins();
+
+					// Switch to the next pattern.
+					currentPatternIdx = (currentPatternIdx + 1) % patternTypes.size();
+					switchPatternExecutor(patternTypes.at(currentPatternIdx));
 				}
 			}
 		}
