@@ -20,6 +20,8 @@ using PinIdx = int;
 using PinMap = std::array<PinIdx, TOTAL_PINS_N>;
 extern PinMap pinByIdx;
 
+extern SoftwareSerial mySerial;
+
 struct LaserStates
 // States (on/off) of lasers in each array.
 {

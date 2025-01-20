@@ -11,7 +11,13 @@ uint64_t currentCodepointIdx = 0;
 std::string currentCodepoint;
 Signals currentCodepointMorseCode;
 // Refresh rate that is equal to the duration of Dit – the shortest Morse code signal.
-uint16_t refreshRate = 100; // in ms
+uint16_t refreshRate = 50; // in ms
+
+// Serial port to the secondary.
+const int rxPin = 21;
+const int txPin = 20;
+
+SoftwareSerial mySerial(rxPin, txPin);
 
 #define TEST_REFRESH_RATE 50
 
@@ -83,6 +89,8 @@ void setup()
 	}
 	Serial.println("Serial port is ready.");
 
+	mySerial.begin(9600);
+
 	for (size_t i = 0; i < pinByIdx.size(); i++)
 	{
 		std::cout << "pinN = " << i << " " << pinByIdx.at(i) << std::endl;
@@ -115,8 +123,6 @@ void teardown()
 
 void loop()
 {
-	// try
-	// {
 	std::cout << "Picking the next codepoint." << std::endl;
 	currentCodepoint = CODEPOINTS.at(currentCodepointIdx);
 	currentCodepointMorseCode = encodeNumeral(currentCodepoint.c_str());
@@ -156,17 +162,6 @@ void loop()
 	std::cout << "Current codepoint Idx: " << currentCodepointIdx << std::endl;
 	std::cout << "Codepoints length: " << CODEPOINTS.size() << std::endl;
 	std::cout << "Free RAM: " << freeram() << std::endl;
-	// }
-	// catch (const std::exception &e)
-	// {
-	// 	std::cerr << "Exception caught: " << e.what() << std::endl;
-	// 	return;
-	// }
-	// catch (...)
-	// {
-	// 	std::cerr << "Unknown exception caught" << std::endl;
-	// 	return;
-	// }
 }
 
 void printLaserStates(LaserStates &laserStates)

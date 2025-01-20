@@ -93,9 +93,32 @@ void PatternExecutor::setLaserState(bool laserState)
 	}
 	case TeensyType::Secondary:
 	{
+		std::cout << "Setting secondary laser state." << std::endl;
 		laserStates.secondaryLaserStates[currentLaserX][currentLaserY] = laserState;
-		// todo: Send command to the secondary Teensy.
+		// Send command to the secondary Teensy using serial.
+		PinIdx pinIdx = getPinId(currentLaserX, currentLaserY);
+		std::string command = "SET " + std::to_string(pinIdx) + " " + std::to_string(isPinExtended(currentLaserX, currentLaserY)) + " " + std::to_string(laserState);
+		std::cout << command << std::endl;
+		mySerial.println(command.c_str());
+		// mySerial.print("SET ");
+		// mySerial.print(pinIdx);
+		// mySerial.print(" ");
+		// mySerial.print(isPinExtended(currentLaserX, currentLaserY));
+		// mySerial.print(" ");
+		// mySerial.println(laserState ? "HIGH" : "LOW");
 		break;
 	}
+	}
+}
+
+void PatternExecutor::setLaserState(PinIdx pinIdx, bool laserState, bool isExtended)
+{
+	if (isExtended)
+	{
+		this->setExtendedPinCallback(pinIdx, laserState ? HIGH : LOW);
+	}
+	else
+	{
+		digitalWrite(pinIdx, laserState ? HIGH : LOW);
 	}
 }

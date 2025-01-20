@@ -41,4 +41,7 @@ public:
 
 	// Update the laser array in the primary as well as send command to the secondary.
 	void setLaserState(bool laserState);
+
+	// Set a certain laser pin.
+	void setLaserState(PinIdx pinIdx, bool laserState, bool isExtended);
 };
