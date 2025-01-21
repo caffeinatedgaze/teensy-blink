@@ -98,11 +98,11 @@ void testPins()
 
 void setup()
 {
-	while (!bitRead(USB1_PORTSC1, 7) && !Serial && millis() < 15000)
-	// while (!Serial && millis() < 15000)
-	{
-		// wait for Arduino Serial Monitor to be ready
-	}
+	// while (!bitRead(USB1_PORTSC1, 7) && !Serial && millis() < 15000)
+	// // while (!Serial && millis() < 15000)
+	// {
+	// 	// wait for Arduino Serial Monitor to be ready
+	// }
 	Serial.println("Serial port is ready.");
 
 	mySerial.begin(9600);
